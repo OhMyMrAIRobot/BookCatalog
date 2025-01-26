@@ -1,13 +1,13 @@
 //
-//  ContentView.swift
+//  MainView.swift
 //  BookCatalog
 //
-//  Created by Daniil on 25.01.25.
+//  Created by Daniil on 26.01.25.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct MainView: View {
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -20,5 +20,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    MainView()
 }
