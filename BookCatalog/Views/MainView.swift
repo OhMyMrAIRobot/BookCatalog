@@ -8,14 +8,13 @@
 import SwiftUI
 
 struct MainView: View {
+    @State private var selectedTab: Int = 0
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+            Spacer()
+            NavigationBar(selectedTab: $selectedTab)
+        }.edgesIgnoringSafeArea(.bottom)
     }
 }
 
