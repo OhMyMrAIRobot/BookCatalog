@@ -13,6 +13,19 @@ struct MainView: View {
     var body: some View {
         VStack {
             Spacer()
+            Button{
+                AuthService.shared.signOut()
+            } label: {
+                Text("Sign out")
+                    .font(.title3)
+                    .bold()
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 15)
+                        .fill(.black))
+                    .padding()
+            }
             NavigationBar(selectedTab: $selectedTab)
         }.edgesIgnoringSafeArea(.bottom)
     }

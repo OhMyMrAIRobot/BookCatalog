@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct RegisterView : View {
-    @EnvironmentObject var authController : AuthController
+    @State private var showAlert = false
+    @State private var errorMsg = ""
     @State private var email : String = ""
     @State private var password : String = ""
     @State private var age : Double = 6
@@ -16,6 +17,9 @@ struct RegisterView : View {
     var body: some View {
         NavigationView {
             VStack {
+                
+                // Alerts
+                ErrorAlert(showAlert: $showAlert, title: "Warning!", message: errorMsg, dismissButtonText: "Close")
                 
                 // Image
                 Image("Book")
@@ -82,7 +86,15 @@ struct RegisterView : View {
                 
                 // Button "Register"
                 Button{
-                    authController.register(email: email, password: password, age: Int(age))
+                    AuthService.shared.register(email: email, password: password, age: Int(age)) { result in
+                        switch result {
+                        case .success(let user):
+                            print(user)
+                        case .failure(let error):
+                            errorMsg = error.localizedDescription
+                            showAlert.toggle()
+                        }
+                    }
                 } label: {
                     Text("Register")
                         .font(.title3)
@@ -98,7 +110,6 @@ struct RegisterView : View {
                 // Button "Sign in"
                 Button(action: {}) {
                     NavigationLink(destination: AuthView()
-                        .environmentObject(authController)
                         .navigationBarBackButtonHidden(true)) {
                             Text("Sign In")
                                 .font(.title3)

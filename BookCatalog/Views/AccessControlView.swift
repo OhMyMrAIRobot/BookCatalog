@@ -9,19 +9,15 @@ import SwiftUI
 import FirebaseAuth
 
 struct AccessControlView : View {
-    @StateObject var authController = AuthController()
-    @StateObject var authService = AuthService()
-    
+    @ObservedObject var authService = AuthService.shared
     @ViewBuilder
     var body: some View {
         ZStack {
-            if authController.isSignedIn {
+            if authService.isLoggedIn {
                 MainView()
             } else {
-                AuthView().environmentObject(authController)
+                AuthView()
             }
-        }.onAppear{
-            authController.isSignedIn = authService.isAuth()
         }
     }
 }

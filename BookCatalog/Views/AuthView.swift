@@ -8,13 +8,18 @@
 import SwiftUI
 
 struct AuthView : View {
-    @EnvironmentObject var authController : AuthController
     @State private var email : String = ""
     @State private var password : String = ""
+    @State private var showAlert = false
+    @State private var errorMsg = ""
     
     var body: some View {
         NavigationView {
+
             VStack {
+                
+                // Alerts
+                ErrorAlert(showAlert: $showAlert, title: "Warning!", message: errorMsg, dismissButtonText: "Close")
                 
                 // Image
                 Image("Book")
@@ -64,7 +69,16 @@ struct AuthView : View {
                 VStack {
                     // Button "Sign in"
                     Button{
-                        authController.signIn(email: email, password: password)
+                        AuthService.shared.signIn(email: email, password: password) { result in
+                            switch result {
+                            case .success(let user):
+                                print(user)
+                            case .failure(let error):
+                                print(error.localizedDescription)
+                                errorMsg = error.localizedDescription
+                                showAlert.toggle()
+                            }
+                        }
                     } label: {
                         Text("Sign In")
                             .font(.title3)
@@ -81,7 +95,6 @@ struct AuthView : View {
                     // Button "Register"
                     Button(action: {}) {
                         NavigationLink(destination: RegisterView()
-                            .environmentObject(authController)
                             .navigationBarBackButtonHidden(true)) {
                                 Text("Register")
                                     .font(.title3)
@@ -95,7 +108,6 @@ struct AuthView : View {
         }
     }
 }
-
 
 #Preview {
     AuthView()
