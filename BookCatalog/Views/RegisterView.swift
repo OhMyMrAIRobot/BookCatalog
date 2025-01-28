@@ -15,7 +15,7 @@ struct RegisterView : View {
     @State private var age : Double = 6
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 
                 // Alerts
@@ -25,7 +25,7 @@ struct RegisterView : View {
                 Image("Book")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 150, height: 150)
+                    .frame(width: 150, height: 150) // TODO: сделать относительно границ экрана
                     .padding(.top, 30.0)
 
                 

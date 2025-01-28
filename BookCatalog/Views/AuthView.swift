@@ -12,7 +12,7 @@ struct AuthView : View {
     @State private var password : String = ""
     @State private var showAlert = false
     @State private var errorMsg = ""
-    
+
     var body: some View {
         NavigationView {
 

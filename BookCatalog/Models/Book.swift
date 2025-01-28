@@ -7,15 +7,14 @@
 
 import Foundation
 
-public struct Book : Codable, Identifiable {
-    public var id : String = UUID().uuidString
+public struct Book : Codable {
+    public var id : String
     var title : String
+    var description: String
     var publishedYear : Int
-    var pageCount: Int
+    var ageRestriction: Int
 
     var authorId : String
     var genreId : String
     var languageId : String
-    
-    var images : [String]
 }

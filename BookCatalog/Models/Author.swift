@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct Author : Codable, Identifiable {
-    public var id : String = UUID().uuidString
+public struct Author : Codable {
+    var id : String
     var name : String
     var surname : String
     var thirdname : String
