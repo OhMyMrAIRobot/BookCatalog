@@ -29,6 +29,10 @@ class DatabaseService {
         return db.collection("Genres")
     }
     
+    private var booksRef: CollectionReference {
+        return db.collection("Books")
+    }
+    
     
     private init() {}
     
@@ -115,6 +119,33 @@ class DatabaseService {
             }
             
             completion(.success(genresDict))
+        }
+    }
+    
+    
+    func getBooks(completion: @escaping (Result <[String: Book], Error>) -> ()) {
+        booksRef.getDocuments { snapshot, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let snap = snapshot else {
+                completion(.failure(NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No snapshot found"])))
+                return
+            }
+            
+            var booksDict : [String: Book] = [:]
+            
+            for document in snap.documents {
+                let data = document.data()
+                
+                if let book = Book(data: data) {
+                    booksDict[book.id] = book
+                }
+            }
+            
+            completion(.success(booksDict))
         }
     }
 }
