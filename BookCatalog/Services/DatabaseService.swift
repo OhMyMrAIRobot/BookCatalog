@@ -17,8 +17,12 @@ class DatabaseService {
         return db.collection("Profiles")
     }
     
-    private var bookLgnRef: CollectionReference {
+    private var bookLgnsRef: CollectionReference {
         return db.collection("Languages")
+    }
+    
+    private var authorsRef: CollectionReference {
+        return db.collection("Authors")
     }
     
     private init() {}
@@ -34,7 +38,7 @@ class DatabaseService {
     }
     
     func getBookLanguages(completion: @escaping (Result <[String: BookLanguage], Error>) -> ()) {
-        bookLgnRef.getDocuments { snapshot, error in
+        bookLgnsRef.getDocuments { snapshot, error in
             if let error = error {
                 completion(.failure(error))
                 return
@@ -54,8 +58,28 @@ class DatabaseService {
                     bookLanguageDict[lang.id] = lang
                 }
             }
-            print(bookLanguageDict)
+           // print(bookLanguageDict)
             completion(.success(bookLanguageDict))
+        }
+    }
+    
+    func getAuthorById(authorId: String, completion: @escaping (Result <Author, Error>) -> ()) {
+        authorsRef.document(authorId).getDocument { document, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let document = document,
+                document.exists,
+                let data = document.data(),
+                let author = Author(data: data)
+            else {
+                completion(.failure(NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Author not found"])))
+                return
+            }
+            
+            completion(.success(author))
         }
     }
 }
