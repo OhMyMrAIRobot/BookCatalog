@@ -48,6 +48,27 @@ class DatabaseService {
     }
     
     
+    func getProfileById(profileId: String, completion: @escaping (Result <Profile, Error>) -> ()) {
+        profilesRef.document(profileId).getDocument { document, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let document = document,
+                  document.exists,
+                  let data = document.data(),
+                  let profile = Profile(data: data)
+            else {
+                completion(.failure(NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Profile not found"])))
+                return
+            }
+            
+            completion(.success(profile))
+        }
+    }
+    
+    
     func getBookLanguages(completion: @escaping (Result <[String: BookLanguage], Error>) -> ()) {
         bookLgnsRef.getDocuments { snapshot, error in
             if let error = error {
@@ -83,9 +104,9 @@ class DatabaseService {
             }
             
             guard let document = document,
-                document.exists,
-                let data = document.data(),
-                let author = Author(data: data)
+                  document.exists,
+                  let data = document.data(),
+                  let author = Author(data: data)
             else {
                 completion(.failure(NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Author not found"])))
                 return
