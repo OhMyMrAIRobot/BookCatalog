@@ -8,7 +8,7 @@
 import Foundation
 
 public struct BookLanguage {
-    public var id : String
+    var id : String
     var name : String
     
     init?(data: [String: Any]) {
