@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainView: View {
     @StateObject private var mainViewModel = MainViewModel()
-    @State private var selectedTab: Int = 0
+    @Binding var selectedTab: Int
     
     @State var text = ""
 
@@ -24,10 +24,18 @@ struct MainView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             SearchBarView(searchText: $text)
+                .padding(.bottom, 20)
             
-            ScrollView {
-                BookCardView(book: Book(), author: Author(), genre: Genre())
+            ScrollView() {
+                VStack(spacing: 20) {
+                    BookCardView(book: Book(), author: Author(), genre: Genre())
+                    BookCardView(book: Book(), author: Author(), genre: Genre())
+                    BookCardView(book: Book(), author: Author(), genre: Genre())
+                    BookCardView(book: Book(), author: Author(), genre: Genre())
+                    BookCardView(book: Book(), author: Author(), genre: Genre())
+                }.padding(.horizontal)
             }
+
             
             NavigationBar(selectedTab: $selectedTab)
         }
@@ -38,5 +46,5 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView()
+    MainView(selectedTab: .constant(0))
 }

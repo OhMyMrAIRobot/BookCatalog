@@ -11,10 +11,9 @@ struct BookCardView : View {
     let book: Book
     let author: Author
     let genre: Genre
-    var isFavorite: Bool = true
+    @State var isFavorite: Bool = true
     
     var body : some View {
-        VStack {
             HStack(alignment: .top) {
                 AsyncImage(url: URL(string: book.images.isEmpty ?
                                     "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png"
@@ -22,8 +21,8 @@ struct BookCardView : View {
                     image.image?.resizable()
                 }
                 .cornerRadius(10)
-                .frame(maxWidth: 100)
-                .frame(minWidth: 100)
+                .frame(maxWidth: 90)
+                //.frame(minWidth: 90)
                 .clipped()
                 .shadow(color: Color.black.opacity(0.3), radius: 10, x: -2, y: 2)
                 
@@ -56,7 +55,7 @@ struct BookCardView : View {
                     .buttonStyle(PlainButtonStyle())
                 }
                 .padding(.leading, 15)
-                .frame(width: 190)
+                .frame(width: 185)
                 
                 Spacer()
                 
@@ -75,7 +74,7 @@ struct BookCardView : View {
                     Spacer()
                     
                     Button(action: {
-                        
+                        isFavorite.toggle()
                     }) {
                         Image(systemName: isFavorite ? "heart.fill" : "heart")
                             .foregroundColor(isFavorite ? .red : .gray)
@@ -84,23 +83,16 @@ struct BookCardView : View {
                     .padding(.bottom, 5)
                 }
                 .frame(width: 55)
-
-
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .frame(maxHeight: 130)
             .padding(15)
             .background(Color.white)
             .cornerRadius(15)
-            .shadow(radius: 4)
-        }
-        .padding(.horizontal, 15)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGray6))
-        .edgesIgnoringSafeArea(.all)
+
     }
 }
 
 #Preview {
-    BookCardView(book: Book(), author: Author(), genre: Genre())
+    MainView(selectedTab: .constant(0))
+    //BookCardView(book: Book(), author: Author(), genre: Genre())
 }

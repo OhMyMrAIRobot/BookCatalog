@@ -12,39 +12,33 @@ struct SearchBarView : View {
     @State private var isFilterActive: Bool = false
     
     var body : some View {
-//        VStack {
-            HStack {
-                Image(systemName: "magnifyingglass")
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+            
+            TextField("Search books here...", text: $searchText)
+                .autocorrectionDisabled(true)
+                .accentColor(.black)
+            
+            Button(action: {
+                isFilterActive.toggle()
+            }) {
+                Image(systemName: "line.horizontal.3.decrease")
+                    .font(.title)
+                    .background(.white)
                     .foregroundColor(.gray)
-                
-                TextField("Search books here...", text: $searchText)
-                    .autocorrectionDisabled(true)
-                    .accentColor(.black)
-                
-                Button(action: {
-                    isFilterActive.toggle()
-                }) {
-                    Image(systemName: "line.horizontal.3.decrease")
-                        .font(.title)
-                        .background(.white)
-                        .foregroundColor(.gray)
-                }
-                .padding(.trailing, 10)
-
             }
-            .padding(15)
-            .background(.white)
-            .cornerRadius(15)
-            .padding(.horizontal)
-//        }
-//        .frame(maxWidth: .infinity, maxHeight: .infinity)
-//        .background(Color(.systemGray6))
-//        .edgesIgnoringSafeArea(.all)
+            .padding(.trailing, 10)
 
+        }
+        .padding(15)
+        .background(.white)
+        .cornerRadius(15)
+        .padding(.horizontal)
     }
 }
 
-#Preview {
-    @State var text: String = ""
-    SearchBarView(searchText: $text)
-}
+//#Preview {
+//    @State var text: String = ""
+//    SearchBarView(searchText: $text)
+//}

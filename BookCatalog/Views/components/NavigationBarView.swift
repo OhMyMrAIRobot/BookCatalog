@@ -29,6 +29,7 @@ struct NavigationBar : View {
                 icon: "star.fill",
                 label: "Favourite",
                 isSelected: selectedTab == 1
+
             ) {
                 selectedTab = 1
             }
@@ -47,7 +48,6 @@ struct NavigationBar : View {
         .padding(.horizontal, 30)
         .padding(.top, 8)
         .padding(.bottom, 24)
-        .background(Color(.systemGray6).shadow(radius: 2))
     }
 }
 
@@ -72,3 +72,7 @@ struct NavigationTabItem: View {
     }
 }
 
+
+#Preview {
+    MainView(selectedTab: .constant(0))
+}
