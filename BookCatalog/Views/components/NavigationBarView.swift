@@ -16,7 +16,7 @@ struct NavigationBar : View {
             // Books Tab
             NavigationTabItem(
                 icon: "book.fill",
-                label: "Book",
+                label: "Books",
                 isSelected: selectedTab == 0
             ) {
                 selectedTab = 0
@@ -47,7 +47,7 @@ struct NavigationBar : View {
         .padding(.horizontal, 30)
         .padding(.top, 8)
         .padding(.bottom, 24)
-        .background(Color.white.shadow(radius: 2))
+        .background(Color(.systemGray6).shadow(radius: 2))
     }
 }
 

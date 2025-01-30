@@ -8,17 +8,20 @@
 import Foundation
 
 public struct Book {
-    var id : String
-    var title : String
-    var description: String
-    var publishedYear : Int
-    var ageRestriction: Int
-
-    var authorId : String
-    var genreId : String
-    var languageId : String
+    var id : String = "123"
+    var title : String = "Yves Saint Laurent"
+    var description: String = "desc"
+    var publishedYear : Int = 2024
+    var ageRestriction: Int = 6
     
-    var images : [String]
+    var authorId : String = "13243"
+    var genreId : String = "342234"
+    var languageId : String = "32424"
+    
+    var images : [String] = ["https://www.sostav.ru/images/news/2022/04/08/d5bazwrc.png"]
+    init () {
+        
+    }
     
     init?(data: [String : Any]) {
         guard let id = data["id"] as? String, !id.isEmpty else { return nil }
@@ -40,4 +43,6 @@ public struct Book {
         self.languageId = languageId
         self.images = data["images"] as? [String] ?? []
     }
+    
+    
 }

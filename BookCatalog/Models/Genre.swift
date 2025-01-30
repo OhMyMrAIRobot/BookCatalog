@@ -8,9 +8,13 @@
 import Foundation
 
 public struct Genre {
-    var id: String
-    var name : String
-    var description : String
+    var id: String = "123"
+    var name : String = "Fantasy"
+    var description : String = "Something ..."
+    
+    init() {
+        
+    }
     
     init?(data: [String: Any]) {
         guard let id = data["id"] as? String, !id.isEmpty else { return nil }

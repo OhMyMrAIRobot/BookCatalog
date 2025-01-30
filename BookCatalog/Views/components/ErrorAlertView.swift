@@ -1,5 +1,5 @@
 //
-//  ErrorAlert.swift
+//  ErrorAlertView.swift
 //  BookCatalog
 //
 //  Created by Daniil on 27.01.25.

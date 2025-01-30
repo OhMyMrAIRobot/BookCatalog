@@ -8,10 +8,14 @@
 import Foundation
 
 public struct Author {
-    var id : String
-    var name : String
-    var surname : String
-    var thirdname : String
+    var id : String = "123"
+    var name : String = "Suzy Menkes"
+    var surname : String = "rohtua"
+    var thirdname : String = ""
+    
+    init () {
+        
+    }
     
     init?(data: [String: Any]) {
         guard let id = data["id"] as? String, !id.isEmpty else { return nil }

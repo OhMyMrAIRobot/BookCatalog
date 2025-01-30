@@ -8,39 +8,32 @@
 import SwiftUI
 
 struct MainView: View {
+    @StateObject private var mainViewModel = MainViewModel()
     @State private var selectedTab: Int = 0
-    private var base64String = ""
+    
+    @State var text = ""
+
     var body: some View {
         VStack {
-            if let image = decodeBase64Image(base64String) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 200, height: 200)
-            } else {
-                Text("Ошибка загрузки изображения")
+            Text("Book list")
+                .font(.system(size: 32))
+                .fontDesign(.rounded) // TODO: найти норм шрифт
+                .fontWeight(.semibold)
+                .padding(.bottom, 20)
+                .padding(.leading, 15)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            SearchBarView(searchText: $text)
+            
+            ScrollView {
+                BookCardView(book: Book(), author: Author(), genre: Genre())
             }
-            Spacer()
-            Button{
-                AuthService.shared.signOut()
-            } label: {
-                Text("Sign out")
-                    .font(.title3)
-                    .bold()
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 15)
-                        .fill(.black))
-                    .padding()
-            }
+            
             NavigationBar(selectedTab: $selectedTab)
-        }.edgesIgnoringSafeArea(.bottom)
-    }
-    
-    func decodeBase64Image(_ base64: String) -> UIImage? {
-        guard let imageData = Data(base64Encoded: base64, options: .ignoreUnknownCharacters) else { return nil }
-        return UIImage(data: imageData)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemGray6))
+        .edgesIgnoringSafeArea(.bottom)
     }
 }
 

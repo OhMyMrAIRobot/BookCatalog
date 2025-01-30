@@ -14,7 +14,7 @@ struct AuthView : View {
     @State private var errorMsg = ""
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
 
             VStack {
                 
