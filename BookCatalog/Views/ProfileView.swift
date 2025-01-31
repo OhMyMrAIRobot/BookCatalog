@@ -8,15 +8,11 @@
 import SwiftUI
 
 struct ProfileView : View {
-    @Binding var selectedTab: Int
     
     var body: some View {
         VStack {
             Text("Profile")
-            
-            Spacer()
-            
-            NavigationBar(selectedTab: $selectedTab)
+        
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemGray6))
@@ -25,5 +21,5 @@ struct ProfileView : View {
 }
 
 #Preview {
-    FavouriteView(selectedTab: .constant(2))
+    FavouriteView()
 }

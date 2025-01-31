@@ -19,6 +19,7 @@ public struct Book {
     var languageId : String = "32424"
     
     var images : [String] = ["https://www.sostav.ru/images/news/2022/04/08/d5bazwrc.png"]
+    
     init () {
         
     }
@@ -43,6 +44,4 @@ public struct Book {
         self.languageId = languageId
         self.images = data["images"] as? [String] ?? []
     }
-    
-    
 }

@@ -102,7 +102,7 @@ class DatabaseService {
                 completion(.failure(error))
                 return
             }
-            
+
             guard let document = document,
                   document.exists,
                   let data = document.data(),
@@ -144,7 +144,7 @@ class DatabaseService {
     }
     
     
-    func getBooks(completion: @escaping (Result <[String: Book], Error>) -> ()) {
+    func getBooks(completion: @escaping (Result <[Book], Error>) -> ()) {
         booksRef.getDocuments { snapshot, error in
             if let error = error {
                 completion(.failure(error))
@@ -156,17 +156,17 @@ class DatabaseService {
                 return
             }
             
-            var booksDict : [String: Book] = [:]
+            var books : [Book] = []
             
             for document in snap.documents {
                 let data = document.data()
                 
                 if let book = Book(data: data) {
-                    booksDict[book.id] = book
+                    books.append(book)
                 }
             }
             
-            completion(.success(booksDict))
+            completion(.success(books))
         }
     }
 }

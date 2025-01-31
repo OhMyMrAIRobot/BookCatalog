@@ -74,5 +74,5 @@ struct NavigationTabItem: View {
 
 
 #Preview {
-    MainView(selectedTab: .constant(0))
+    MainView()
 }

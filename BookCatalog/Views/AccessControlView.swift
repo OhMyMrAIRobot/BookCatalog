@@ -8,35 +8,36 @@
 import SwiftUI
 import FirebaseAuth
 
-struct AccessControlView : View {
+struct AccessControlView: View {
     @ObservedObject var authService = AuthService.shared
     @State private var selectedTab = 0
-    
-    @ViewBuilder
+
     var body: some View {
-        ZStack {
-           // if authService.isLoggedIn {
-            if true {
+        VStack(spacing: 0) {
+            if authService.isLoggedIn { // authService.isLoggedIn
                 TabView(selection: $selectedTab) {
-                    MainView(selectedTab: $selectedTab)
+                    MainView()
                         .tag(0)
-                    
-                    FavouriteView(selectedTab: $selectedTab)
+
+                    FavouriteView()
                         .tag(1)
-                    
-                    ProfileView(selectedTab: $selectedTab)
+
+                    ProfileView()
                         .tag(2)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(.systemGray6))
-                .edgesIgnoringSafeArea(.bottom)
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+
+                NavigationBar(selectedTab: $selectedTab)
+                    .background(Color(.systemGray6))
             } else {
                 AuthView()
             }
         }
+        .background(Color(.systemGray6))
+        .edgesIgnoringSafeArea(.bottom)
     }
 }
+
 
 #Preview {
     AccessControlView()

@@ -23,6 +23,7 @@ struct BookCatalogApp: App {
     var body: some Scene {
         WindowGroup {
             AccessControlView()
+                .preferredColorScheme(.light)
         }
     }
 }

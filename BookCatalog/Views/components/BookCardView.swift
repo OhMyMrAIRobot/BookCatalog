@@ -33,7 +33,7 @@ struct BookCardView : View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .lineLimit(2)
 
-                    Text(author.name)
+                    Text("\(author.name) \(author.surname)")
                         .font(.system(size: 18))
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
@@ -93,6 +93,6 @@ struct BookCardView : View {
 }
 
 #Preview {
-    MainView(selectedTab: .constant(0))
+    MainView()
     //BookCardView(book: Book(), author: Author(), genre: Genre())
 }

@@ -9,9 +9,6 @@ import SwiftUI
 
 struct MainView: View {
     @StateObject private var mainViewModel = MainViewModel()
-    @Binding var selectedTab: Int
-    
-    @State var text = ""
 
     var body: some View {
         VStack {
@@ -23,28 +20,43 @@ struct MainView: View {
                 .padding(.leading, 15)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            SearchBarView(searchText: $text)
+            SearchBarView(searchText: $mainViewModel.searchText)
                 .padding(.bottom, 20)
             
             ScrollView() {
                 VStack(spacing: 20) {
-                    BookCardView(book: Book(), author: Author(), genre: Genre())
-                    BookCardView(book: Book(), author: Author(), genre: Genre())
-                    BookCardView(book: Book(), author: Author(), genre: Genre())
-                    BookCardView(book: Book(), author: Author(), genre: Genre())
-                    BookCardView(book: Book(), author: Author(), genre: Genre())
+                    if (!mainViewModel.filteredBooks.isEmpty) {
+                        
+                        ForEach(0..<mainViewModel.filteredBooks.count, id: \.self) { idx in
+                            let book = mainViewModel.filteredBooks[idx]
+                            let author = mainViewModel.authors[book.authorId]
+                            let genre = mainViewModel.genres[book.genreId]
+                            
+                            BookCardView(book: book, author: author ?? Author(), genre: genre ?? Genre())
+                        }
+                    } else {
+                        ForEach(0..<mainViewModel.books.count, id: \.self) { idx in
+                            let book = mainViewModel.books[idx]
+                            let author = mainViewModel.authors[book.authorId]
+                            let genre = mainViewModel.genres[book.genreId]
+                            
+                            BookCardView(book: book, author: author ?? Author(), genre: genre ?? Genre())
+                        }
+                    }
+
                 }.padding(.horizontal)
             }
-
-            
-            NavigationBar(selectedTab: $selectedTab)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemGray6))
         .edgesIgnoringSafeArea(.bottom)
+        .onAppear {
+            mainViewModel.fetchBooks()
+            mainViewModel.fetchGenres()
+        }
     }
 }
 
 #Preview {
-    MainView(selectedTab: .constant(0))
+    MainView()
 }

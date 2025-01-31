@@ -26,10 +26,14 @@ struct SearchBarView : View {
                 Image(systemName: "line.horizontal.3.decrease")
                     .font(.title)
                     .background(.white)
-                    .foregroundColor(.gray)
+                    .foregroundColor(isFilterActive ? .black : .gray)
             }
             .padding(.trailing, 10)
-
+            .sheet(isPresented: $isFilterActive) {
+                FilterModalView(isPresented: $isFilterActive)
+                    .presentationDetents([.height(300), .fraction(0.5)]) 
+                    .presentationDragIndicator(.visible)
+            }
         }
         .padding(15)
         .background(.white)
