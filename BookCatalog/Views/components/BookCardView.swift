@@ -11,7 +11,7 @@ struct BookCardView : View {
     let book: Book
     let author: Author
     let genre: Genre
-    @State var isFavorite: Bool = true
+    @StateObject var mainViewModel : MainViewModel
     
     var body : some View {
         HStack(alignment: .top) {
@@ -54,7 +54,7 @@ struct BookCardView : View {
                     }
                     .buttonStyle(PlainButtonStyle())
                     
-                    Text("16+")
+                    Text("\(book.ageRestriction)+")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
@@ -81,10 +81,10 @@ struct BookCardView : View {
                 Spacer()
                 
                 Button(action: {
-                    isFavorite.toggle()
+                    mainViewModel.toggleFavouriteBook(bookId: book.id)
                 }) {
-                    Image(systemName: isFavorite ? "heart.fill" : "heart")
-                        .foregroundColor(isFavorite ? .red : .gray)
+                    Image(systemName: mainViewModel.favouriteBookIds.contains(book.id) ? "heart.fill" : "heart")
+                        .foregroundColor(mainViewModel.favouriteBookIds.contains(book.id) ? .red : .gray)
                         .font(.system(size: 30))
                 }
 
@@ -99,5 +99,5 @@ struct BookCardView : View {
 }
 
 #Preview {
-    BookCardView(book: Book(), author: Author(), genre: Genre())
+  //  BookCardView(book: Book(), author: Author(), genre: Genre(), )
 }

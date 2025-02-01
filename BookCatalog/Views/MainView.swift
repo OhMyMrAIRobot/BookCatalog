@@ -11,6 +11,7 @@ struct MainView: View {
     @StateObject private var mainViewModel = MainViewModel()
     @State private var navigationPath = NavigationPath()
     
+    
     var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack {
@@ -33,7 +34,7 @@ struct MainView: View {
                                let genre = mainViewModel.genres[book.genreId] {
                                 
                                 NavigationLink(value: book) {
-                                    BookCardView(book: book, author: author, genre: genre)
+                                    BookCardView(book: book, author: author, genre: genre, mainViewModel: mainViewModel)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
@@ -61,6 +62,7 @@ struct MainView: View {
         .onAppear {
             mainViewModel.fetchBooks()
             mainViewModel.fetchGenres()
+            mainViewModel.fetchFavouriteBookIds()
         }
     }
 }

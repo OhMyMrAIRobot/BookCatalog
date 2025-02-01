@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 class DatabaseService {
     static let shared = DatabaseService()
@@ -167,6 +168,64 @@ class DatabaseService {
             }
             
             completion(.success(books))
+        }
+    }
+    
+    func toggleFavouriteBook(bookId: String, completion: @escaping(Bool) -> ()) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            completion(false)
+            return
+        }
+        
+        profilesRef.document(userId).getDocument { document, error in
+            guard let document = document,
+                  document.exists,
+                  let data = document.data()
+            else {
+                completion(false)
+                return
+            }
+            
+            var favouriteBookIds = data["favBookIds"] as? [String] ?? []
+            if favouriteBookIds.contains(bookId) {
+                favouriteBookIds.removeAll { $0 == bookId }
+            } else {
+                favouriteBookIds.append(bookId)
+            }
+            
+            self.profilesRef.document(userId).updateData(["favBookIds": favouriteBookIds]) { error in
+                completion(error == nil)
+                return
+            }
+        }
+    }
+    
+    
+    func getFavouriteBookIds(completion: @escaping(Result<[String], Error>) -> ()) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            completion(.failure(NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No user id found"])))
+            return
+        }
+        
+        profilesRef.document(userId).getDocument { document, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let document = document,
+                  document.exists,
+                  let data = document.data()
+            else {
+                completion(.failure(NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Profile not found"])))
+                return
+            }
+            
+            if let favouriteBookIds = data["favBookIds"] as? [String] {
+                completion(.success(favouriteBookIds))
+            } else {
+                completion(.failure(NSError(domain: "Firestore", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid data format for favBookIds"])))
+            }
         }
     }
 }

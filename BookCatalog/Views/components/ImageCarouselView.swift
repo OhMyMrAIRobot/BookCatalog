@@ -11,10 +11,10 @@ struct ImageCarouselView: View {
     var book: Book
     @State private var currentIndex = 0
 
-    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        VStack {
+        ZStack {
             TabView(selection: $currentIndex) {
                 ForEach(Array(book.images.enumerated()), id: \.offset) { index, imgUrl in
                     AsyncImage(url: URL(string: imgUrl)) { image in
@@ -31,6 +31,38 @@ struct ImageCarouselView: View {
                     currentIndex = (currentIndex + 1) % book.images.count
                 }
             }
+
+            HStack {
+                Spacer()
+                Button(action: {
+                    withAnimation {
+                        currentIndex = (currentIndex + 1 + book.images.count) % book.images.count
+                    }
+                }) {
+                    Image(systemName: "chevron.right")
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.2), in: Circle())
+                }
+                .padding(.leading, 20)
+            }
+
+            HStack {
+                Button(action: {
+                    withAnimation {
+                        currentIndex = (currentIndex - 1) % book.images.count
+                    }
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.2), in: Circle())
+                }
+                .padding(.trailing, 20)
+                Spacer()
+            }
         }
         .frame(height: 380)
     }
@@ -38,6 +70,9 @@ struct ImageCarouselView: View {
 
 
 
+//#Preview {
+//    ImageCarouselView(book: Book())
+//}
 #Preview {
-    ImageCarouselView(book: Book())
+    BookView(bookViewModel: BookViewModel(book: Book(), author: Author(), genre: Genre(), language: BookLanguage()))
 }

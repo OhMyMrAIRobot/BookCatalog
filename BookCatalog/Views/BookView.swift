@@ -93,7 +93,7 @@ struct BookView: View {
                 .padding(.top, 10)
             
         }
-        .padding()
+       // .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(.systemGray6))
         .scrollIndicators(.hidden)

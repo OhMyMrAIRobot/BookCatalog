@@ -14,7 +14,7 @@ struct AccessControlView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if authService.isLoggedIn { // authService.isLoggedIn
+            if true { // authService.isLoggedIn
                 TabView(selection: $selectedTab) {
                     MainView()
                         .tag(0)

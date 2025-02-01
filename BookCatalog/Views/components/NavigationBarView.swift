@@ -48,6 +48,15 @@ struct NavigationBar : View {
         .padding(.horizontal, 30)
         .padding(.top, 8)
         .padding(.bottom, 24)
+        .background(
+            Color(.systemGray6)
+                .overlay(
+                    Rectangle()
+                        .fill(Color.black).opacity(0.8)
+                        .frame(height: 1), alignment: .top
+                )
+        )
+        
     }
 }
 
@@ -74,5 +83,5 @@ struct NavigationTabItem: View {
 
 
 #Preview {
-    MainView()
+    NavigationBar(selectedTab: .constant(1))
 }
