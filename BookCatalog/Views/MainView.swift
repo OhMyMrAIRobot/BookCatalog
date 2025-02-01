@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct MainView: View {
-    @StateObject private var mainViewModel = MainViewModel()
+    @EnvironmentObject var favouriteViewModel : FavouriteViewModel
+    @StateObject var mainViewModel = MainViewModel()
     @State private var navigationPath = NavigationPath()
-    
     
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -27,22 +27,29 @@ struct MainView: View {
                     .padding(.bottom, 20)
                 
                 
-                ScrollView {
-                    VStack(spacing: 20) {
-                        ForEach(mainViewModel.filteredBooks.isEmpty ? mainViewModel.books : mainViewModel.filteredBooks, id: \.id) { book in
-                            if let author = mainViewModel.authors[book.authorId],
-                               let genre = mainViewModel.genres[book.genreId] {
-                                
-                                NavigationLink(value: book) {
-                                    BookCardView(book: book, author: author, genre: genre, mainViewModel: mainViewModel)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal)
-                .scrollIndicators(.hidden)
+//                ScrollView {
+//                    VStack(spacing: 20) {
+//                        ForEach(mainViewModel.filteredBooks.isEmpty ? mainViewModel.books : mainViewModel.filteredBooks, id: \.id) { book in
+//                            if let author = mainViewModel.authors[book.authorId],
+//                               let genre = mainViewModel.genres[book.genreId] {
+//                                
+//                                NavigationLink(value: book) {
+//                                    BookCardView(book: book, author: author, genre: genre)
+//                                        .environmentObject(favouriteViewModel)
+//                                }
+//                                .buttonStyle(PlainButtonStyle())
+//                            }
+//                        }
+//                    }
+//                }
+//                .padding(.horizontal)
+//                .scrollIndicators(.hidden)
+                BookListView(
+                    books: mainViewModel.filteredBooks.isEmpty ? mainViewModel.books : mainViewModel.filteredBooks,
+                    authors: mainViewModel.authors,
+                    genres: mainViewModel.genres
+                )
+                .environmentObject(favouriteViewModel)
                 
             }
             .background(Color(.systemGray6))
@@ -56,18 +63,18 @@ struct MainView: View {
                         genre: genre,
                         language: BookLanguage()
                     ))
+                    .environmentObject(favouriteViewModel)
                 }
             }
         }
         .onAppear {
             mainViewModel.fetchBooks()
             mainViewModel.fetchGenres()
-            mainViewModel.fetchFavouriteBookIds()
         }
     }
 }
 
-#Preview {
-    MainView()
-}
+//#Preview {
+//    MainView()
+//}
 

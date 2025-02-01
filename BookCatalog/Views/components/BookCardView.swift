@@ -11,7 +11,7 @@ struct BookCardView : View {
     let book: Book
     let author: Author
     let genre: Genre
-    @StateObject var mainViewModel : MainViewModel
+    @EnvironmentObject var favouriteViewModel : FavouriteViewModel
     
     var body : some View {
         HStack(alignment: .top) {
@@ -81,10 +81,10 @@ struct BookCardView : View {
                 Spacer()
                 
                 Button(action: {
-                    mainViewModel.toggleFavouriteBook(bookId: book.id)
+                    favouriteViewModel.toggleFavouriteBook(bookId: book.id)
                 }) {
-                    Image(systemName: mainViewModel.favouriteBookIds.contains(book.id) ? "heart.fill" : "heart")
-                        .foregroundColor(mainViewModel.favouriteBookIds.contains(book.id) ? .red : .gray)
+                    Image(systemName: favouriteViewModel.favouriteBookIds.contains(book.id) ? "heart.fill" : "heart")
+                        .foregroundColor(favouriteViewModel.favouriteBookIds.contains(book.id) ? .red : .gray)
                         .font(.system(size: 30))
                 }
 

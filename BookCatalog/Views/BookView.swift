@@ -8,6 +8,7 @@ import SwiftUI
 
 struct BookView: View {
     @ObservedObject var bookViewModel: BookViewModel
+    @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @State var isFavorite: Bool = true
     
     var body: some View {
@@ -73,10 +74,10 @@ struct BookView: View {
                 
             
                 Button(action: {
-                    isFavorite.toggle()
+                    favouriteViewModel.toggleFavouriteBook(bookId: bookViewModel.book.id)
                 }) {
-                    Image(systemName: isFavorite ? "heart.fill" : "heart")
-                        .foregroundColor(isFavorite ? .red : .gray)
+                    Image(systemName: favouriteViewModel.favouriteBookIds.contains(bookViewModel.book.id) ? "heart.fill" : "heart")
+                        .foregroundColor(favouriteViewModel.favouriteBookIds.contains(bookViewModel.book.id) ? .red : .gray)
                         .font(.system(size: 30))
                 }
             }
@@ -93,8 +94,8 @@ struct BookView: View {
                 .padding(.top, 10)
             
         }
-       // .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .padding(.horizontal)
         .background(Color(.systemGray6))
         .scrollIndicators(.hidden)
     }

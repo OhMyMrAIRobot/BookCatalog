@@ -9,13 +9,29 @@ import SwiftUI
 
 struct FavouriteView : View {
     
+    @State var navigationPath = NavigationPath()
+    @EnvironmentObject var favouriteViewModel : FavouriteViewModel
+    
     var body : some View {
         VStack {
-            Text("Favourites")
+            NavigationStack(path: $navigationPath) {
+                Text("Favourite books")
+                    .font(.system(size: 32))
+                    .fontDesign(.rounded)
+                    .fontWeight(.semibold)
+                    .padding(.bottom, 20)
+                    .padding(.leading, 15)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                ScrollView {
+                    
+                }
+                
+                .padding(.horizontal)
+                .scrollIndicators(.hidden)
+            }
+            .background(Color(.systemGray6))
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGray6))
-        .edgesIgnoringSafeArea(.bottom)
     }
 }
 
