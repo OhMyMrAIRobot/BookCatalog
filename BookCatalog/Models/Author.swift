@@ -9,8 +9,8 @@ import Foundation
 
 public struct Author {
     var id : String = "123"
-    var name : String = "Suzy Menkes"
-    var surname : String = "rohtua"
+    var name : String = "Suzy"
+    var surname : String = "Menkes"
     var thirdname : String = ""
     
     init () {

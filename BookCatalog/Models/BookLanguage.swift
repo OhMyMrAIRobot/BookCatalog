@@ -8,8 +8,12 @@
 import Foundation
 
 public struct BookLanguage {
-    var id : String
-    var name : String
+    var id : String = "123"
+    var name : String = "Fantasy"
+    
+    init() {
+        
+    }
     
     init?(data: [String: Any]) {
         guard let id = data["id"] as? String, !id.isEmpty else { return nil }

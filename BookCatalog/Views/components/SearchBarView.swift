@@ -31,7 +31,7 @@ struct SearchBarView : View {
             .padding(.trailing, 10)
             .sheet(isPresented: $isFilterActive) {
                 FilterModalView(isPresented: $isFilterActive)
-                    .presentationDetents([.height(300), .fraction(0.5)]) 
+                    .presentationDetents([.large, .fraction(0.5)])
                     .presentationDragIndicator(.visible)
             }
         }

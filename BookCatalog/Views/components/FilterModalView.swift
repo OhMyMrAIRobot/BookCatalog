@@ -9,33 +9,30 @@ import SwiftUI
 
 struct FilterModalView: View {
     @Binding var isPresented: Bool
-    @State private var selectedGenre: String = "All"
-    @State private var selectedAge: Int = 0
-
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
-
-                Stepper("Minimum Age: \(selectedAge)+", value: $selectedAge, in: 0...18)
-                    .padding()
-
-                Spacer()
+                Text("Select Genres")
+                    .font(.headline)
+                    .padding(.top)
                 
-                Button("Apply Filters") {
-                    isPresented = false
-                }
-                .buttonStyle(.borderedProminent)
-                .padding()
-            }
-            .navigationTitle("Filters")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
-                        isPresented = false
+                
+                    .navigationTitle("Filters")
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Close") {
+                                isPresented = false
+                            }
+                        }
                     }
-                }
             }
         }
     }
+}
+
+
+
+#Preview {
+    FilterModalView(isPresented: .constant(true))
 }
