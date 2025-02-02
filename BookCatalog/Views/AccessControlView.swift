@@ -10,20 +10,26 @@ import FirebaseAuth
 
 struct AccessControlView: View {
     @ObservedObject private var authService = AuthService.shared
+    
     @ObservedObject private var favouriteViewModel = FavouriteViewModel()
+    @ObservedObject private var catalogViewModel = CatalogViewModel()
+    
     @State private var selectedTab = 0
     
     var body: some View {
         VStack(spacing: 0) {
-            if true { // authService.isLoggedIn
+            if authService.isLoggedIn { // authService.isLoggedIn
                 TabView(selection: $selectedTab) {
                     MainView()
                         .tag(0)
                         .environmentObject(favouriteViewModel)
+                        .environmentObject(catalogViewModel)
+                    
 
                     FavouriteView()
                         .tag(1)
                         .environmentObject(favouriteViewModel)
+                        .environmentObject(catalogViewModel)
 
                     ProfileView()
                         .tag(2)

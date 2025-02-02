@@ -7,8 +7,7 @@
 
 import Foundation
 
-class MainViewModel : ObservableObject {
-    
+class CatalogViewModel : ObservableObject {
     @Published var books : [Book] = []
     @Published var authors : [String : Author] = [:]
     @Published var genres : [String: Genre] = [:]

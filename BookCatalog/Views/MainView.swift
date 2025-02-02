@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct MainView: View {
-    @EnvironmentObject var favouriteViewModel : FavouriteViewModel
-    @StateObject var mainViewModel = MainViewModel()
+    @EnvironmentObject var favouriteViewModel: FavouriteViewModel
+    @EnvironmentObject var catalogViewModel : CatalogViewModel
     @State private var navigationPath = NavigationPath()
     
     var body: some View {
@@ -23,7 +23,7 @@ struct MainView: View {
                     .padding(.leading, 15)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                SearchBarView(searchText: $mainViewModel.searchText)
+                SearchBarView(searchText: $catalogViewModel.searchText)
                     .padding(.bottom, 20)
                 
                 
@@ -45,17 +45,17 @@ struct MainView: View {
 //                .padding(.horizontal)
 //                .scrollIndicators(.hidden)
                 BookListView(
-                    books: mainViewModel.filteredBooks.isEmpty ? mainViewModel.books : mainViewModel.filteredBooks,
-                    authors: mainViewModel.authors,
-                    genres: mainViewModel.genres
+                    books: catalogViewModel.filteredBooks.isEmpty ? catalogViewModel.books : catalogViewModel.filteredBooks,
+                    authors: catalogViewModel.authors,
+                    genres: catalogViewModel.genres
                 )
                 .environmentObject(favouriteViewModel)
                 
             }
             .background(Color(.systemGray6))
             .navigationDestination(for: Book.self) { book in
-                if let author = mainViewModel.authors[book.authorId],
-                   let genre = mainViewModel.genres[book.genreId] {
+                if let author = catalogViewModel.authors[book.authorId],
+                   let genre = catalogViewModel.genres[book.genreId] {
                     
                     BookView(bookViewModel: BookViewModel(
                         book: book,
@@ -68,8 +68,8 @@ struct MainView: View {
             }
         }
         .onAppear {
-            mainViewModel.fetchBooks()
-            mainViewModel.fetchGenres()
+            catalogViewModel.fetchBooks()
+            catalogViewModel.fetchGenres()
         }
     }
 }

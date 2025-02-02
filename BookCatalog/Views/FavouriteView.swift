@@ -11,10 +11,11 @@ struct FavouriteView : View {
     
     @State var navigationPath = NavigationPath()
     @EnvironmentObject var favouriteViewModel : FavouriteViewModel
+    @EnvironmentObject var catalogViewModel : CatalogViewModel
     
     var body : some View {
-        VStack {
-            NavigationStack(path: $navigationPath) {
+        NavigationStack(path: $navigationPath) {
+            VStack {
                 Text("Favourite books")
                     .font(.system(size: 32))
                     .fontDesign(.rounded)
@@ -23,18 +24,34 @@ struct FavouriteView : View {
                     .padding(.leading, 15)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                ScrollView {
-                    
+                BookListView(
+                    books: catalogViewModel.books.filter { favouriteViewModel.favouriteBookIds.contains($0.id) },
+                    authors: catalogViewModel.authors,
+                    genres: catalogViewModel.genres
+                )
+                .environmentObject(favouriteViewModel)
+                .background(Color(.systemGray6))
+                .navigationDestination(for: Book.self) { book in
+                    if let author = catalogViewModel.authors[book.authorId],
+                       let genre = catalogViewModel.genres[book.genreId] {
+                        
+                        BookView(bookViewModel: BookViewModel(
+                            book: book,
+                            author: author,
+                            genre: genre,
+                            language: BookLanguage()
+                        ))
+                        .environmentObject(favouriteViewModel)
+                    }
                 }
-                
-                .padding(.horizontal)
-                .scrollIndicators(.hidden)
             }
             .background(Color(.systemGray6))
         }
     }
 }
 
-#Preview {
-    FavouriteView()
-}
+//#Preview {
+//    FavouriteView()
+//        .environmentObject(FavouriteViewModel())
+//        .environmentObject(CatalogViewModel())
+//}
