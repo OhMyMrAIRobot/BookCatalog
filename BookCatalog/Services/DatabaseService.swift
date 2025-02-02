@@ -14,176 +14,103 @@ class DatabaseService {
     
     private let db = Firestore.firestore()
     
-    private var profilesRef: CollectionReference {
-        return db.collection("Profiles")
-    }
-    
-    private var bookLgnsRef: CollectionReference {
-        return db.collection("Languages")
-    }
-    
-    private var authorsRef: CollectionReference {
-        return db.collection("Authors")
-    }
-    
-    private var genresRef: CollectionReference {
-        return db.collection("Genres")
-    }
-    
-    private var booksRef: CollectionReference {
-        return db.collection("Books")
-    }
+    private var profilesRef: CollectionReference { return db.collection("Profiles") }
+    private var bookLgnsRef: CollectionReference { return db.collection("Languages") }
+    private var authorsRef: CollectionReference { return db.collection("Authors") }
+    private var genresRef: CollectionReference { return db.collection("Genres") }
+    private var booksRef: CollectionReference { return db.collection("Books") }
+    private var reviewsRef: CollectionReference { return db.collection("Reviews") }
     
     
     private init() {}
     
     
-    func createProfile(profile: Profile, completion: @escaping (Result <Profile, Error>) -> ()) {
-        profilesRef.document(profile.id).setData(profile.representation) { error in
-            if let error = error {
-                completion(.failure(error))
-            } else {
-                completion(.success(profile))
-            }
+    func createProfile(profile: Profile) async throws -> () {
+        do {
+            try profilesRef.document(profile.id).setData(from: profile)
+        } catch {
+            throw error
         }
     }
     
     
-    func getProfileById(profileId: String, completion: @escaping (Result <Profile, Error>) -> ()) {
-        profilesRef.document(profileId).getDocument { document, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let document = document,
-                  document.exists,
-                  let data = document.data(),
-                  let profile = Profile(data: data)
-            else {
-                completion(.failure(NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Profile not found"])))
-                return
-            }
-            
-            completion(.success(profile))
-        }
-    }
-    
-    
-    func getBookLanguages(completion: @escaping (Result <[String: BookLanguage], Error>) -> ()) {
-        bookLgnsRef.getDocuments { snapshot, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let snap = snapshot else {
-                completion(.failure(NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No snapshot found"])))
-                return
-            }
-            
-            var bookLanguagesDict: [String: BookLanguage] = [:]
-            
-            for document in snap.documents {
-                let data = document.data()
-                
-                if let lang = BookLanguage(data: data) {
-                    bookLanguagesDict[lang.id] = lang
-                }
-            }
-           // print(bookLanguagesDict)
-            completion(.success(bookLanguagesDict))
-        }
-    }
-    
-    
-    func getAuthorById(authorId: String, completion: @escaping (Result <Author, Error>) -> ()) {
-        authorsRef.document(authorId).getDocument { document, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-
-            guard let document = document,
-                  document.exists,
-                  let data = document.data(),
-                  let author = Author(data: data)
-            else {
-                completion(.failure(NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Author not found"])))
-                return
-            }
-            
-            completion(.success(author))
-        }
-    }
-    
-    
-    func getGenres(completion: @escaping (Result <[String: Genre], Error>) -> ()) {
-        genresRef.getDocuments { snapshot, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let snap = snapshot else {
-                completion(.failure(NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No snapshot found"])))
-                return
-            }
-            
-            var genresDict : [String: Genre] = [:]
-
-            for document in snap.documents {
-                let data = document.data()
-                
-                if let genre = Genre(data: data) {
-                    genresDict[genre.id] = genre
-                }
-            }
-            
-            completion(.success(genresDict))
-        }
-    }
-    
-    
-    func getBooks(completion: @escaping (Result <[Book], Error>) -> ()) {
-        booksRef.getDocuments { snapshot, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let snap = snapshot else {
-                completion(.failure(NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No snapshot found"])))
-                return
-            }
-            
-            var books : [Book] = []
-            
-            for document in snap.documents {
-                let data = document.data()
-                
-                if let book = Book(data: data) {
-                    books.append(book)
-                }
-            }
-            
-            completion(.success(books))
-        }
-    }
-    
-    func toggleFavouriteBook(bookId: String, completion: @escaping(Bool) -> ()) {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            completion(false)
-            return
+    func getProfileById(profileId: String) async throws -> Profile {
+        let document = try await profilesRef.document(profileId).getDocument()
+        
+        guard let profile = try? document.data(as: Profile.self) else {
+            throw NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Profile not found"])
         }
         
-        profilesRef.document(userId).getDocument { document, error in
-            guard let document = document,
-                  document.exists,
-                  let data = document.data()
+        return profile
+    }
+    
+    
+    func getBookLanguages() async throws -> [String: BookLanguage] {
+        let snapshot = try await bookLgnsRef.getDocuments()
+        
+        var languages: [String: BookLanguage] = [:]
+        
+        for document in snapshot.documents {
+            if let language = try? document.data(as: BookLanguage.self) {
+                languages[language.id] = language
+            }
+        }
+        
+        return languages
+    }
+    
+    
+    func getAuthorById(authorId: String) async throws -> Author {
+        let document = try await authorsRef.document(authorId).getDocument()
+        
+        guard let data = document.data(),
+              let author = try? Firestore.Decoder().decode(Author.self, from: data)
+        else {
+            throw NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Author not found"])
+        }
+        
+        return author
+    }
+    
+    
+    func getGenres() async throws -> [String: Genre] {
+        let snapshot = try await genresRef.getDocuments()
+        
+        var genres: [String : Genre] = [:]
+        
+        for document in snapshot.documents {
+            if let genre = try? document.data(as: Genre.self) {
+                genres[genre.id] = genre
+            }
+        }
+        
+        return genres
+    }
+    
+    
+    func getBooks() async throws -> [Book] {
+        let snapshot = try await booksRef.getDocuments()
+        
+        let books: [Book] = snapshot.documents.compactMap { document in
+            return try? document.data(as: Book.self)
+        }
+        
+        return books
+    }
+    
+    
+    func toggleFavouriteBook(bookId: String) async throws -> Bool {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return false
+        }
+        
+        do {
+            let document = try await profilesRef.document(userId).getDocument()
+            
+            guard document.exists,
+                let data = document.data()
             else {
-                completion(false)
-                return
+                return false
             }
             
             var favouriteBookIds = data["favBookIds"] as? [String] ?? []
@@ -192,40 +119,50 @@ class DatabaseService {
             } else {
                 favouriteBookIds.append(bookId)
             }
+
+            try await profilesRef.document(userId).updateData(["favBookIds": favouriteBookIds])
             
-            self.profilesRef.document(userId).updateData(["favBookIds": favouriteBookIds]) { error in
-                completion(error == nil)
-                return
-            }
+            return true
+        } catch {
+            return false
         }
     }
     
     
-    func getFavouriteBookIds(completion: @escaping(Result<[String], Error>) -> ()) {
+    func getFavouriteBookIds() async throws -> [String] {
         guard let userId = Auth.auth().currentUser?.uid else {
-            completion(.failure(NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No user id found"])))
-            return
+            throw NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No user id found"])
         }
         
-        profilesRef.document(userId).getDocument { document, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let document = document,
-                  document.exists,
-                  let data = document.data()
-            else {
-                completion(.failure(NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Profile not found"])))
-                return
-            }
-            
-            if let favouriteBookIds = data["favBookIds"] as? [String] {
-                completion(.success(favouriteBookIds))
-            } else {
-                completion(.failure(NSError(domain: "Firestore", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid data format for favBookIds"])))
+        let document = try await profilesRef.document(userId).getDocument()
+        
+        guard document.exists,
+            let data = document.data()
+        else {
+            throw NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Profile not found"])
+        }
+
+        guard let favouriteBookIds = data["favBookIds"] as? [String] else {
+            throw NSError(domain: "Firestore", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid data format for favBookIds"])
+        }
+        
+        return favouriteBookIds
+    }
+    
+    
+    func getReviewsByBookId(bookId: String) async throws -> [Review] {
+        let snapshot = try await reviewsRef
+            .whereField("bookId", isEqualTo: bookId)
+            .getDocuments()
+        
+        var reviews: [Review] = []
+        
+        for document in snapshot.documents {
+            if let review = try? document.data(as: Review.self) {
+                reviews.append(review)
             }
         }
+        
+        return reviews
     }
 }

@@ -26,24 +26,6 @@ struct MainView: View {
                 SearchBarView(searchText: $catalogViewModel.searchText)
                     .padding(.bottom, 20)
                 
-                
-//                ScrollView {
-//                    VStack(spacing: 20) {
-//                        ForEach(mainViewModel.filteredBooks.isEmpty ? mainViewModel.books : mainViewModel.filteredBooks, id: \.id) { book in
-//                            if let author = mainViewModel.authors[book.authorId],
-//                               let genre = mainViewModel.genres[book.genreId] {
-//                                
-//                                NavigationLink(value: book) {
-//                                    BookCardView(book: book, author: author, genre: genre)
-//                                        .environmentObject(favouriteViewModel)
-//                                }
-//                                .buttonStyle(PlainButtonStyle())
-//                            }
-//                        }
-//                    }
-//                }
-//                .padding(.horizontal)
-//                .scrollIndicators(.hidden)
                 BookListView(
                     books: catalogViewModel.filteredBooks.isEmpty ? catalogViewModel.books : catalogViewModel.filteredBooks,
                     authors: catalogViewModel.authors,
@@ -55,21 +37,24 @@ struct MainView: View {
             .background(Color(.systemGray6))
             .navigationDestination(for: Book.self) { book in
                 if let author = catalogViewModel.authors[book.authorId],
-                   let genre = catalogViewModel.genres[book.genreId] {
-                    
+                   let genre = catalogViewModel.genres[book.genreId],
+                   let language = catalogViewModel.languages[book.languageId] {
                     BookView(bookViewModel: BookViewModel(
                         book: book,
                         author: author,
                         genre: genre,
-                        language: BookLanguage()
+                        language: language
                     ))
                     .environmentObject(favouriteViewModel)
                 }
             }
         }
         .onAppear {
-            catalogViewModel.fetchBooks()
-            catalogViewModel.fetchGenres()
+            Task {
+                await catalogViewModel.fetchBooks()
+                await catalogViewModel.fetchGenres()
+                await catalogViewModel.fetchLanguages()
+            }
         }
     }
 }

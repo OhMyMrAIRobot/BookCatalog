@@ -86,11 +86,10 @@ struct RegisterView : View {
                 
                 // Button "Register"
                 Button{
-                    AuthService.shared.register(email: email, password: password, age: Int(age)) { result in
-                        switch result {
-                        case .success(let user):
-                            print(user)
-                        case .failure(let error):
+                    Task {
+                        do {
+                            try await AuthService.shared.register(email: email, password: password, age: Int(age))
+                        } catch {
                             errorMsg = error.localizedDescription
                             showAlert.toggle()
                         }

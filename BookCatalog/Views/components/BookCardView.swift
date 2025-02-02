@@ -81,7 +81,9 @@ struct BookCardView : View {
                 Spacer()
                 
                 Button(action: {
-                    favouriteViewModel.toggleFavouriteBook(bookId: book.id)
+                    Task {
+                        await favouriteViewModel.toggleFavouriteBook(bookId: book.id)
+                    }
                 }) {
                     Image(systemName: favouriteViewModel.favouriteBookIds.contains(book.id) ? "heart.fill" : "heart")
                         .foregroundColor(favouriteViewModel.favouriteBookIds.contains(book.id) ? .red : .gray)

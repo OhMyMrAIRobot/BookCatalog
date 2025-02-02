@@ -33,13 +33,13 @@ struct FavouriteView : View {
                 .background(Color(.systemGray6))
                 .navigationDestination(for: Book.self) { book in
                     if let author = catalogViewModel.authors[book.authorId],
-                       let genre = catalogViewModel.genres[book.genreId] {
-                        
+                       let genre = catalogViewModel.genres[book.genreId],
+                       let language = catalogViewModel.languages[book.languageId] {
                         BookView(bookViewModel: BookViewModel(
                             book: book,
                             author: author,
                             genre: genre,
-                            language: BookLanguage()
+                            language: language
                         ))
                         .environmentObject(favouriteViewModel)
                     }

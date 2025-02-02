@@ -49,6 +49,8 @@ struct BookView: View {
                         .bold()
                 }.padding(.horizontal, 7)
                 
+                // TODO: добавить язык книги
+                
                 HStack(spacing: 1.5) {
                     Image(systemName: "exclamationmark.shield.fill")
                         .foregroundColor(getAgeColor(age: bookViewModel.book.ageRestriction))
@@ -74,7 +76,9 @@ struct BookView: View {
                 
             
                 Button(action: {
-                    favouriteViewModel.toggleFavouriteBook(bookId: bookViewModel.book.id)
+                    Task {
+                        await favouriteViewModel.toggleFavouriteBook(bookId: bookViewModel.book.id)
+                    }
                 }) {
                     Image(systemName: favouriteViewModel.favouriteBookIds.contains(bookViewModel.book.id) ? "heart.fill" : "heart")
                         .foregroundColor(favouriteViewModel.favouriteBookIds.contains(bookViewModel.book.id) ? .red : .gray)
@@ -107,8 +111,4 @@ struct BookView: View {
         default: return .red
         }
     }
-}
-
-#Preview {
-    BookView(bookViewModel: BookViewModel(book: Book(), author: Author(), genre: Genre(), language: BookLanguage()))
 }

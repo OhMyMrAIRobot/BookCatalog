@@ -73,6 +73,3 @@ struct ImageCarouselView: View {
 //#Preview {
 //    ImageCarouselView(book: Book())
 //}
-#Preview {
-    BookView(bookViewModel: BookViewModel(book: Book(), author: Author(), genre: Genre(), language: BookLanguage()))
-}

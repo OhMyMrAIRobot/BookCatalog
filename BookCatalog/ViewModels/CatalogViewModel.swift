@@ -11,7 +11,9 @@ class CatalogViewModel : ObservableObject {
     @Published var books : [Book] = []
     @Published var authors : [String : Author] = [:]
     @Published var genres : [String: Genre] = [:]
+    @Published var languages: [String: BookLanguage] = [:]
     @Published var filteredBooks : [Book] = []
+    
     
     @Published var searchText = "" {
         didSet {
@@ -20,47 +22,53 @@ class CatalogViewModel : ObservableObject {
     }
     
     
-    func fetchBooks() {
-        DatabaseService.shared.getBooks { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let books):
-                    self.books = books
-                    self.fetchAuthors()
-                case .failure(let error):
-                    print(error.localizedDescription)
+    func fetchBooks() async {
+        do {
+            let books = try await DatabaseService.shared.getBooks()
+            await MainActor.run {
+                self.books = books
+            }
+            await fetchAuthors()
+        } catch {
+            print("Failed to fetch books: \(error.localizedDescription)")
+        }
+    }
+    
+    
+    func fetchAuthors() async {
+        for book in books {
+            do {
+                let author = try await DatabaseService.shared.getAuthorById(authorId: book.authorId)
+                await MainActor.run {
+                    self.authors[author.id] = author
                 }
+            } catch {
+                print("Failed to fetch author: \(error.localizedDescription)")
             }
         }
     }
     
     
-    func fetchAuthors() {
-        books.forEach { book in
-            DatabaseService.shared.getAuthorById(authorId: book.authorId) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let author):
-                            self.authors[author.id] = author
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                    }
-                }
+    func fetchGenres() async {
+        do {
+            let genres = try await DatabaseService.shared.getGenres()
+            await MainActor.run {
+                self.genres = genres
             }
+        } catch {
+            print("Failed to fetch genres: \(error.localizedDescription)")
         }
     }
     
     
-    func fetchGenres() {
-        DatabaseService.shared.getGenres { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let genres):
-                    self.genres = genres
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+    func fetchLanguages() async {
+        do {
+            let languages = try await DatabaseService.shared.getBookLanguages()
+            await MainActor.run {
+                self.languages = languages
             }
+        } catch {
+            print("Failed to fetch languages: \(error.localizedDescription)")
         }
     }
     

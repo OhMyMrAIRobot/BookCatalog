@@ -7,19 +7,7 @@
 
 import Foundation
 
-public struct BookLanguage {
-    var id : String = "123"
-    var name : String = "Fantasy"
-    
-    init() {
-        
-    }
-    
-    init?(data: [String: Any]) {
-        guard let id = data["id"] as? String, !id.isEmpty else { return nil }
-        guard let name = data["name"] as? String, !name.isEmpty else { return nil }
-        
-        self.id = id
-        self.name = name
-    }
+public struct BookLanguage: Identifiable, Codable {
+    public var id : String
+    var name : String
 }

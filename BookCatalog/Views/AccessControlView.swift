@@ -36,7 +36,9 @@ struct AccessControlView: View {
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .onAppear {
-                    favouriteViewModel.fetchFavouriteBookIds()
+                    Task {
+                        await favouriteViewModel.fetchFavouriteBookIds()
+                    }
                 }
 
                 NavigationBar(selectedTab: $selectedTab)

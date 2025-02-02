@@ -23,39 +23,34 @@ class AuthService : ObservableObject {
 //        }
     }
     
-    func signIn(email: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
-        auth.signIn(withEmail: email, password: password) { result, error in
-            if let result = result {
-                completion(.success(result.user))
+    
+    func signIn(email: String, password: String) async throws -> () {
+        do {
+            try await auth.signIn(withEmail: email, password: password)
+            await MainActor.run {
                 self.isLoggedIn = true
-            } else if let error = error {
-                completion(.failure(error))
             }
+            return
+        } catch {
+            throw error
         }
     }
     
-    func register(email: String, password: String, age: Int, completion: @escaping (Result<User, Error>) -> Void) {
-        auth.createUser(withEmail: email, password: password) { result, error in
-            if let result = result {
-                
-                let profile = Profile(id: result.user.uid,
-                                      email: email,
-                                      age: age)
-                DatabaseService.shared.createProfile(profile: profile) { dbResult in
-                    switch dbResult{
-                    case .success(_):
-                        completion(.success(result.user))
-                        self.isLoggedIn = true
-                    case .failure(let error):
-                        completion(.failure(error))
-                    }
-                }
-                
-            } else if let error = error {
-                completion(.failure(error))
+    
+    func register(email: String, password: String, age: Int) async throws -> () {
+        do {
+            let result = try await auth.createUser(withEmail: email, password: password)
+            let profile = Profile(id: result.user.uid, email: email, age: age)
+            try await DatabaseService.shared.createProfile(profile: profile)
+            await MainActor.run {
+                self.isLoggedIn = true
             }
+            return
+        } catch {
+            throw error
         }
     }
+    
     
     func signOut() {
         do {
@@ -67,6 +62,7 @@ class AuthService : ObservableObject {
             
         }
     }
+    
     
     func isAuth() -> Bool {
         return Auth.auth().currentUser != nil

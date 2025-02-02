@@ -67,13 +67,11 @@ struct AuthView : View {
                 Spacer()
                 
                 VStack {
-                    // Button "Sign in"
                     Button{
-                        AuthService.shared.signIn(email: email, password: password) { result in
-                            switch result {
-                            case .success(let user):
-                                print(user)
-                            case .failure(let error):
+                        Task {
+                            do {
+                                try await AuthService.shared.signIn(email: email, password: password)
+                            } catch {
                                 print(error.localizedDescription)
                                 errorMsg = error.localizedDescription
                                 showAlert.toggle()
