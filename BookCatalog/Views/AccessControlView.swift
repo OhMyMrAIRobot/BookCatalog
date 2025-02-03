@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseAuth
+import Firebase
 
 struct AccessControlView: View {
     @ObservedObject private var authService = AuthService.shared
@@ -25,12 +26,12 @@ struct AccessControlView: View {
                         .environmentObject(favouriteViewModel)
                         .environmentObject(catalogViewModel)
                     
-
+                    
                     FavouriteView()
                         .tag(1)
                         .environmentObject(favouriteViewModel)
                         .environmentObject(catalogViewModel)
-
+                    
                     ProfileView()
                         .tag(2)
                 }
@@ -40,7 +41,7 @@ struct AccessControlView: View {
                         await favouriteViewModel.fetchFavouriteBookIds()
                     }
                 }
-
+                
                 NavigationBar(selectedTab: $selectedTab)
                     .background(Color(.systemGray6))
             } else {

@@ -25,7 +25,7 @@ class DatabaseService {
     private init() {}
     
     
-    func createProfile(profile: Profile) async throws -> () {
+    func setProfile(profile: Profile) async throws -> () {
         do {
             try profilesRef.document(profile.id).setData(from: profile)
         } catch {
@@ -156,13 +156,27 @@ class DatabaseService {
             .getDocuments()
         
         var reviews: [Review] = []
-        
         for document in snapshot.documents {
             if let review = try? document.data(as: Review.self) {
                 reviews.append(review)
             }
         }
-        
         return reviews
+    }
+    
+    
+    func setReview(review: Review) async throws -> () {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            throw NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No user id found"])
+        }
+        do {
+            var newReview = review
+            newReview.userId = userId
+            newReview.date = Timestamp(date: .now)
+            
+            try reviewsRef.document(review.id).setData(from: newReview)
+        } catch {
+            throw error
+        }
     }
 }

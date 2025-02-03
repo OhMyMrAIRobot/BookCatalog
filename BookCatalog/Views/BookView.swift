@@ -10,6 +10,7 @@ struct BookView: View {
     @ObservedObject var bookViewModel: BookViewModel
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @State var isFavorite: Bool = true
+    @State private var selectedRating: Int? = nil
     
     var body: some View {
         ScrollView() {
@@ -36,6 +37,8 @@ struct BookView: View {
                 .fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .padding(.top, 5)
+            
+            Divider()
             
             HStack(alignment: .center) {
                 HStack(spacing: 1.5) {
@@ -88,20 +91,47 @@ struct BookView: View {
             .padding(.top, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            ExpandableTextView(fullText: bookViewModel.book.description)
+            Divider()
+            
+            ExpandableTextView(fullText: bookViewModel.book.description, lines: 5)
                 .font(.system(size: 20))
                 .fontWeight(.semibold)
                 .foregroundColor(.secondary)
                 .padding(.top, 10)
             
+            Divider()
+            
             ImageCarouselView(book: bookViewModel.book)
                 .padding(.top, 10)
             
+            Divider()
+            
+
+            HStack {
+                Text("Total reviews")
+    
+             //   Button()
+            }
+            
+            ReviewFiltersBar(selectedRating: $selectedRating)
+
+            VStack(spacing: 20) {
+                ForEach(bookViewModel.reviews.filter { selectedRating == nil || $0.rating == selectedRating }) { review in
+                    ReviewView(review: review, profile: bookViewModel.profiles[review.userId] ?? Profile(id: "", email: "", age: 4))
+                }
+            }
+
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding(.horizontal)
+        .padding()
         .background(Color(.systemGray6))
         .scrollIndicators(.hidden)
+        .onAppear {
+            Task {
+                await bookViewModel.fetchReviews()
+                await bookViewModel.fetchProfiles()
+            }
+        }
     }
     
     func getAgeColor(age: Int) -> Color {
