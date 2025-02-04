@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @EnvironmentObject var catalogViewModel : CatalogViewModel
+    @EnvironmentObject var ratingViewModel : RatingViewModel
     @State private var navigationPath = NavigationPath()
     
     var body: some View {
@@ -29,7 +30,8 @@ struct MainView: View {
                 BookListView(
                     books: catalogViewModel.filteredBooks.isEmpty ? catalogViewModel.books : catalogViewModel.filteredBooks,
                     authors: catalogViewModel.authors,
-                    genres: catalogViewModel.genres
+                    genres: catalogViewModel.genres,
+                    ratings: ratingViewModel.bookRatings
                 )
                 .environmentObject(favouriteViewModel)
                 
@@ -38,22 +40,27 @@ struct MainView: View {
             .navigationDestination(for: Book.self) { book in
                 if let author = catalogViewModel.authors[book.authorId],
                    let genre = catalogViewModel.genres[book.genreId],
-                   let language = catalogViewModel.languages[book.languageId] {
+                   let language = catalogViewModel.languages[book.languageId],
+                   let rating = ratingViewModel.bookRatings[book.id] {
                     BookView(bookViewModel: BookViewModel(
                         book: book,
                         author: author,
                         genre: genre,
-                        language: language
+                        language: language,
+                        rating: rating
                     ))
                     .environmentObject(favouriteViewModel)
+                    .environmentObject(ratingViewModel)
                 }
             }
         }
         .onAppear {
             Task {
                 await catalogViewModel.fetchBooks()
+                await catalogViewModel.fetchAuthors()
                 await catalogViewModel.fetchGenres()
                 await catalogViewModel.fetchLanguages()
+                await ratingViewModel.fetchBookRatings(books: catalogViewModel.books)
             }
         }
     }

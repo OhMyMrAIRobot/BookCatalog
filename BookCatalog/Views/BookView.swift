@@ -9,6 +9,7 @@ import SwiftUI
 struct BookView: View {
     @ObservedObject var bookViewModel: BookViewModel
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
+    @EnvironmentObject var ratingViewModel: RatingViewModel
     @State private var selectedRating: Int? = nil
     @State private var isAddSheetActive = false
     
@@ -50,7 +51,7 @@ struct BookView: View {
                         .font(.system(size: 24))
                         .bold()
                     
-                    Text(String(format: "%.1f", 5.0))
+                    Text(String(format: "%.1f", ratingViewModel.bookRatings[bookViewModel.book.id] ?? 0.0))
                         .font(.system(size: 24))
                         .bold()
                 }.padding(.horizontal, 7)
@@ -151,6 +152,7 @@ struct BookView: View {
                 .presentationDetents([.large, .fraction(0.8)])
                 .presentationDragIndicator(.visible)
                 .environmentObject(bookViewModel)
+                .environmentObject(ratingViewModel)
             }
     
             ReviewFiltersBar(selectedRating: $selectedRating)

@@ -11,6 +11,7 @@ struct BookCardView : View {
     let book: Book
     let author: Author
     let genre: Genre
+    let rating: Double
     @EnvironmentObject var favouriteViewModel : FavouriteViewModel
     
     var body : some View {
@@ -73,7 +74,7 @@ struct BookCardView : View {
                         .font(.system(size: 18))
                         .bold()
                     
-                    Text(String(format: "%.1f", 5.0))
+                    Text(String(format: "%.1f", rating))
                         .font(.system(size: 18))
                         .bold()
                 }

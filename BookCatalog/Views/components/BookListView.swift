@@ -11,6 +11,7 @@ struct BookListView: View{
     var books: [Book]
     var authors: [String: Author]
     var genres: [String: Genre]
+    var ratings: [String: Double]
     
     @EnvironmentObject var favouriteViewModel : FavouriteViewModel
     
@@ -19,10 +20,11 @@ struct BookListView: View{
             VStack(spacing: 20) {
                 ForEach(books, id: \.id) { book in
                     if let author = authors[book.authorId],
-                       let genre = genres[book.genreId] {
+                       let genre = genres[book.genreId],
+                       let rating = ratings[book.id] {
                         
                         NavigationLink(value: book) {
-                            BookCardView(book: book, author: author, genre: genre)
+                            BookCardView(book: book, author: author, genre: genre, rating: rating)
                                 .environmentObject(favouriteViewModel)
                         }
                         .buttonStyle(PlainButtonStyle())

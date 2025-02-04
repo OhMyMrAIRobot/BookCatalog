@@ -14,12 +14,14 @@ class BookViewModel: ObservableObject {
     @Published var language: BookLanguage
     @Published var reviews: [Review] = []
     @Published var profiles: [String: Profile] = [:]
+    @Published var rating: Double
     
-    init(book: Book, author: Author, genre: Genre, language: BookLanguage) {
+    init(book: Book, author: Author, genre: Genre, language: BookLanguage, rating: Double) {
         self.book = book
         self.author = author
         self.genre = genre
         self.language = language
+        self.rating = rating
     }
     
     @MainActor

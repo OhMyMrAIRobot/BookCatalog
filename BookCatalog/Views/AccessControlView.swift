@@ -14,6 +14,7 @@ struct AccessControlView: View {
     
     @ObservedObject private var favouriteViewModel = FavouriteViewModel()
     @ObservedObject private var catalogViewModel = CatalogViewModel()
+    @ObservedObject private var ratingViewModel = RatingViewModel()
     
     @State private var selectedTab = 0
     
@@ -25,12 +26,14 @@ struct AccessControlView: View {
                         .tag(0)
                         .environmentObject(favouriteViewModel)
                         .environmentObject(catalogViewModel)
+                        .environmentObject(ratingViewModel)
                     
                     
                     FavouriteView()
                         .tag(1)
                         .environmentObject(favouriteViewModel)
                         .environmentObject(catalogViewModel)
+                        .environmentObject(ratingViewModel)
                     
                     ProfileView()
                         .tag(2)

@@ -17,6 +17,7 @@ struct NewReviewSheetView: View {
     @Binding var reviewText: String
     
     @EnvironmentObject var bookViewModel: BookViewModel
+    @EnvironmentObject var ratingViewModel: RatingViewModel
     
     var body: some View {
         NavigationStack {
@@ -91,6 +92,7 @@ struct NewReviewSheetView: View {
                         Task {
                             await bookViewModel.postReview(rating: rating, text: reviewText)
                             isPresented = false
+                            ratingViewModel.updateBookRating(bookId: bookViewModel.book.id, reviews: bookViewModel.reviews)
                         }
                     }) {
                         Text("Post review")

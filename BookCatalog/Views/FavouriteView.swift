@@ -10,8 +10,9 @@ import SwiftUI
 struct FavouriteView : View {
     
     @State var navigationPath = NavigationPath()
-    @EnvironmentObject var favouriteViewModel : FavouriteViewModel
-    @EnvironmentObject var catalogViewModel : CatalogViewModel
+    @EnvironmentObject var favouriteViewModel: FavouriteViewModel
+    @EnvironmentObject var catalogViewModel: CatalogViewModel
+    @EnvironmentObject var ratingViewModel: RatingViewModel
     
     var body : some View {
         NavigationStack(path: $navigationPath) {
@@ -27,21 +28,25 @@ struct FavouriteView : View {
                 BookListView(
                     books: catalogViewModel.books.filter { favouriteViewModel.favouriteBookIds.contains($0.id) },
                     authors: catalogViewModel.authors,
-                    genres: catalogViewModel.genres
+                    genres: catalogViewModel.genres,
+                    ratings: ratingViewModel.bookRatings
                 )
                 .environmentObject(favouriteViewModel)
                 .background(Color(.systemGray6))
                 .navigationDestination(for: Book.self) { book in
                     if let author = catalogViewModel.authors[book.authorId],
                        let genre = catalogViewModel.genres[book.genreId],
-                       let language = catalogViewModel.languages[book.languageId] {
+                       let language = catalogViewModel.languages[book.languageId],
+                       let rating = ratingViewModel.bookRatings[book.id] {
                         BookView(bookViewModel: BookViewModel(
                             book: book,
                             author: author,
                             genre: genre,
-                            language: language
+                            language: language,
+                            rating: rating
                         ))
                         .environmentObject(favouriteViewModel)
+                        .environmentObject(ratingViewModel)
                     }
                 }
             }
