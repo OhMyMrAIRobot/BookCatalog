@@ -5,6 +5,7 @@
 //  Created by Daniil on 31.01.25.
 
 import SwiftUI
+import FirebaseAuth
 
 struct BookView: View {
     @ObservedObject var bookViewModel: BookViewModel
@@ -13,8 +14,8 @@ struct BookView: View {
     @State private var selectedRating: Int? = nil
     @State private var isAddSheetActive = false
     
-    @State private var reviewRating = 0
-    @State private var reviewText = ""
+    private let userId = AuthService.shared.getUserId() ?? ""
+
     
     var body: some View {
         ScrollView() {
@@ -146,8 +147,7 @@ struct BookView: View {
                     sheetTitle: "Post new review",
                     bookTitle: bookViewModel.book.title,
                     name: "Name Surname",
-                    rating: $reviewRating,
-                    reviewText: $reviewText
+                    review: bookViewModel.reviews.first(where: { $0.userId == userId })
                 )
                 .presentationDetents([.large, .fraction(0.8)])
                 .presentationDragIndicator(.visible)

@@ -165,7 +165,7 @@ class DatabaseService {
     }
     
     
-    func setReview(review: Review) async throws -> () {
+    func setReview(review: Review) async throws -> Review {
         guard let userId = Auth.auth().currentUser?.uid else {
             throw NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No user id found"])
         }
@@ -175,6 +175,7 @@ class DatabaseService {
             newReview.date = Timestamp(date: .now)
             
             try reviewsRef.document(review.id).setData(from: newReview)
+            return newReview
         } catch {
             throw error
         }

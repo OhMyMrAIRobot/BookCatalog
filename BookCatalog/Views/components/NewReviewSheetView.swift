@@ -12,12 +12,22 @@ struct NewReviewSheetView: View {
     let sheetTitle: String
     let bookTitle: String
     let name: String
-    
-    @Binding var rating: Int
-    @Binding var reviewText: String
+    @State private var review: Review?
+    @State private var rating: Int
+    @State private var reviewText: String
     
     @EnvironmentObject var bookViewModel: BookViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel
+    
+    init(isPresented: Binding<Bool>, sheetTitle: String, bookTitle: String, name: String, review: Review?) {
+        _isPresented = isPresented
+        self.sheetTitle = sheetTitle
+        self.bookTitle = bookTitle
+        self.name = name
+        _review = State(initialValue: review)
+        _rating = State(initialValue: review?.rating ?? 0)
+        _reviewText = State(initialValue: review?.text ?? "")
+    }
     
     var body: some View {
         NavigationStack {
@@ -90,7 +100,9 @@ struct NewReviewSheetView: View {
                     
                     Button(action: {
                         Task {
-                            await bookViewModel.postReview(rating: rating, text: reviewText)
+                            var newReview = Review(bookId: bookViewModel.book.id, rating: rating, text: reviewText)
+                            newReview.id = review?.id ?? newReview.id
+                            await bookViewModel.postReview(review: newReview)
                             isPresented = false
                             ratingViewModel.updateBookRating(bookId: bookViewModel.book.id, reviews: bookViewModel.reviews)
                         }
@@ -115,15 +127,15 @@ struct NewReviewSheetView: View {
     }
 }
 
-#Preview {
-    NewReviewSheetView(
-        isPresented: .constant(true),
-        sheetTitle: "Post new review",
-        bookTitle: "Science of Interstellar",
-        name: "Name Surname",
-        rating: .constant(0),
-        reviewText: .constant("")
-    )
-}
+//#Preview {
+//    NewReviewSheetView(
+//        isPresented: .constant(true),
+//        sheetTitle: "Post new review",
+//        bookTitle: "Science of Interstellar",
+//        name: "Name Surname",
+//        rating: .constant(0),
+//        reviewText: .constant("")
+//    )
+//}
 
 

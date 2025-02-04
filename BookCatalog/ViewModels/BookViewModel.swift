@@ -15,6 +15,7 @@ class BookViewModel: ObservableObject {
     @Published var reviews: [Review] = []
     @Published var profiles: [String: Profile] = [:]
     @Published var rating: Double
+
     
     init(book: Book, author: Author, genre: Genre, language: BookLanguage, rating: Double) {
         self.book = book
@@ -46,11 +47,14 @@ class BookViewModel: ObservableObject {
     }
     
     @MainActor
-    func postReview(rating: Int, text: String) async {
-        let review = Review(bookId: book.id, rating: rating, text: text)
+    func postReview(review: Review) async {
         do {
-            try await DatabaseService.shared.setReview(review: review)
-            reviews.append(review)
+            let result = try await DatabaseService.shared.setReview(review: review)
+            if let index = reviews.firstIndex(where: { $0.id == result.id }) {
+                reviews[index] = result
+            } else {
+                reviews.append(result)
+            }
         } catch {
             print(error.localizedDescription)
         }

@@ -61,6 +61,10 @@ class AuthService : ObservableObject {
     
     
     func isAuth() -> Bool {
-        return Auth.auth().currentUser != nil
+        return auth.currentUser != nil
+    }
+    
+    func getUserId() -> String? {
+        return auth.currentUser?.uid
     }
 }
