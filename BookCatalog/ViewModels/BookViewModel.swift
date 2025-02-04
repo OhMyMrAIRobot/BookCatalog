@@ -25,7 +25,7 @@ class BookViewModel: ObservableObject {
     @MainActor
     func fetchReviews() async {
         do {
-            self.reviews = try await DatabaseService.shared.getReviewsByBookId(bookId: book.id)
+            reviews = try await DatabaseService.shared.getReviewsByBookId(bookId: book.id)
         } catch {
             print(error.localizedDescription)
         }
@@ -40,6 +40,17 @@ class BookViewModel: ObservableObject {
             } catch {
                 print(error.localizedDescription)
             }
+        }
+    }
+    
+    @MainActor
+    func postReview(rating: Int, text: String) async {
+        let review = Review(bookId: book.id, rating: rating, text: text)
+        do {
+            try await DatabaseService.shared.setReview(review: review)
+            reviews.append(review)
+        } catch {
+            print(error.localizedDescription)
         }
     }
 }

@@ -42,7 +42,7 @@ struct ReviewView: View {
                 }
             }
             
-            ExpandableTextView(fullText: review.text, lines: 3)
+            ExpandableTextView(fullText: review.text, lines: 2)
             
             Divider()
         }

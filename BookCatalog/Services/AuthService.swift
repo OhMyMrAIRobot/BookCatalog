@@ -23,28 +23,24 @@ class AuthService : ObservableObject {
 //        }
     }
     
-    
+    @MainActor
     func signIn(email: String, password: String) async throws -> () {
         do {
             try await auth.signIn(withEmail: email, password: password)
-            await MainActor.run {
-                self.isLoggedIn = true
-            }
+            self.isLoggedIn = true
             return
         } catch {
             throw error
         }
     }
     
-    
+    @MainActor
     func register(email: String, password: String, age: Int) async throws -> () {
         do {
             let result = try await auth.createUser(withEmail: email, password: password)
             let profile = Profile(id: result.user.uid, email: email, age: age)
             try await DatabaseService.shared.setProfile(profile: profile)
-            await MainActor.run {
-                self.isLoggedIn = true
-            }
+            self.isLoggedIn = true
             return
         } catch {
             throw error

@@ -9,8 +9,11 @@ import SwiftUI
 struct BookView: View {
     @ObservedObject var bookViewModel: BookViewModel
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
-    @State var isFavorite: Bool = true
     @State private var selectedRating: Int? = nil
+    @State private var isAddSheetActive = false
+    
+    @State private var reviewRating = 0
+    @State private var reviewText = ""
     
     var body: some View {
         ScrollView() {
@@ -91,7 +94,6 @@ struct BookView: View {
             .padding(.top, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            Divider()
             
             ExpandableTextView(fullText: bookViewModel.book.description, lines: 5)
                 .font(.system(size: 20))
@@ -105,14 +107,52 @@ struct BookView: View {
                 .padding(.top, 10)
             
             Divider()
-            
+                .padding(.top, 10)
 
-            HStack {
-                Text("Total reviews")
+            HStack(alignment: .center) {
+                Button(action: {
+                    
+                }) {
+                    Image(systemName: "slider.horizontal.3")
+                }
+                .font(.system(size: 12))
+                .fontWeight(.semibold)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.white)
+                .foregroundColor(.black)
+                .clipShape(Capsule())
     
-             //   Button()
+                Spacer()
+                
+                Button(action: {
+                    isAddSheetActive.toggle()
+                }) {
+                    Text("+ Review")
+                }
+                .font(.system(size: 12))
+                .fontWeight(.semibold)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.black)
+                .foregroundColor(.white)
+                .clipShape(Capsule())
             }
-            
+            .padding(.top, 10)
+            .sheet(isPresented: $isAddSheetActive) {
+                NewReviewSheetView(
+                    isPresented: $isAddSheetActive,
+                    sheetTitle: "Post new review",
+                    bookTitle: bookViewModel.book.title,
+                    name: "Name Surname",
+                    rating: $reviewRating,
+                    reviewText: $reviewText
+                )
+                .presentationDetents([.large, .fraction(0.8)])
+                .presentationDragIndicator(.visible)
+                .environmentObject(bookViewModel)
+            }
+    
             ReviewFiltersBar(selectedRating: $selectedRating)
 
             VStack(spacing: 20) {
