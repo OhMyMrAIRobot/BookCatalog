@@ -10,6 +10,10 @@ import SwiftUI
 struct ReviewView: View {
     let review: Review
     let profile: Profile
+    let userId: String?
+    
+    @EnvironmentObject var bookViewModel: BookViewModel
+    @EnvironmentObject var ratingViewModel: RatingViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -40,6 +44,19 @@ struct ReviewView: View {
                             .foregroundColor(index < review.rating ? .yellow : .gray)
                     }
                 }
+                
+                if review.userId == userId {
+                    Image(systemName: "trash")
+                        .bold()
+                        .foregroundColor(.black)
+                        .onTapGesture {
+                            Task {
+                                await bookViewModel.deleteReview(reviewId: review.id)
+                                ratingViewModel.updateBookRating(bookId: bookViewModel.book.id, reviews: bookViewModel.reviews)
+                            }
+                        }
+                }
+
             }
             
             ExpandableTextView(fullText: review.text, lines: 2)
@@ -53,8 +70,8 @@ struct ReviewView: View {
     }
 }
 
-#Preview {
-    ReviewView(review: Review(
-        bookId: "123", rating: 4, text: "Displaying dates in SwiftUI has been made so easy now, that there is almost no reason to use DateFormatter anymore to display dates in SwiftUI. We will go over several examples to show how powerful this API has become, and there are more configurations that we aren’t going to show here. Hopefully, this article encourages you to check out everything you can do with dates and times in your app."),
-        profile: Profile(id: "123", email: "email", age: 56))
-}
+//#Preview {
+//    ReviewView(review: Review(
+//        bookId: "123", rating: 4, text: "Displaying dates in SwiftUI has been made so easy now, that there is almost no reason to use DateFormatter anymore to display dates in SwiftUI. We will go over several examples to show how powerful this API has become, and there are more configurations that we aren’t going to show here. Hopefully, this article encourages you to check out everything you can do with dates and times in your app."),
+//        profile: Profile(id: "123", email: "email", age: 56))
+//}

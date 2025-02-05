@@ -31,7 +31,6 @@ struct FavouriteView : View {
                     genres: catalogViewModel.genres,
                     ratings: ratingViewModel.bookRatings
                 )
-                .environmentObject(favouriteViewModel)
                 .background(Color(.systemGray6))
                 .navigationDestination(for: Book.self) { book in
                     if let author = catalogViewModel.authors[book.authorId],
@@ -45,8 +44,8 @@ struct FavouriteView : View {
                             language: language,
                             rating: rating
                         ))
-                        .environmentObject(favouriteViewModel)
                         .environmentObject(ratingViewModel)
+                        .environmentObject(favouriteViewModel)
                     }
                 }
             }

@@ -25,7 +25,6 @@ struct BookListView: View{
                         
                         NavigationLink(value: book) {
                             BookCardView(book: book, author: author, genre: genre, rating: rating)
-                                .environmentObject(favouriteViewModel)
                         }
                         .buttonStyle(PlainButtonStyle())
                     }

@@ -33,4 +33,5 @@ class RatingViewModel: ObservableObject {
         let rating = reviews.map { Double($0.rating) }.reduce(0, +) / Double(reviews.count)
         bookRatings[bookId] = rating
     }
+    
 }

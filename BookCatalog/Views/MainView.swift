@@ -33,7 +33,6 @@ struct MainView: View {
                     genres: catalogViewModel.genres,
                     ratings: ratingViewModel.bookRatings
                 )
-                .environmentObject(favouriteViewModel)
                 
             }
             .background(Color(.systemGray6))
@@ -49,8 +48,8 @@ struct MainView: View {
                         language: language,
                         rating: rating
                     ))
-                    .environmentObject(favouriteViewModel)
                     .environmentObject(ratingViewModel)
+                    .environmentObject(favouriteViewModel)
                 }
             }
         }

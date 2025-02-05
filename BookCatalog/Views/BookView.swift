@@ -16,7 +16,6 @@ struct BookView: View {
     
     private let userId = AuthService.shared.getUserId() ?? ""
 
-    
     var body: some View {
         ScrollView() {
             AsyncImage(url: URL(string: bookViewModel.book.images.isEmpty ?
@@ -152,14 +151,17 @@ struct BookView: View {
                 .presentationDetents([.large, .fraction(0.8)])
                 .presentationDragIndicator(.visible)
                 .environmentObject(bookViewModel)
-                .environmentObject(ratingViewModel)
             }
     
             ReviewFiltersBar(selectedRating: $selectedRating)
 
             VStack(spacing: 20) {
                 ForEach(bookViewModel.reviews.filter { selectedRating == nil || $0.rating == selectedRating }) { review in
-                    ReviewView(review: review, profile: bookViewModel.profiles[review.userId] ?? Profile(id: "", email: "", age: 4))
+                    ReviewView(review: review,
+                               profile: bookViewModel.profiles[review.userId] ?? Profile(id: "", email: "", age: 4),
+                               userId: userId
+                    )
+                    .environmentObject(bookViewModel)
                 }
             }
 

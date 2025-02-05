@@ -59,4 +59,14 @@ class BookViewModel: ObservableObject {
             print(error.localizedDescription)
         }
     }
+    
+    @MainActor
+    func deleteReview(reviewId: String) async {
+        do {
+            try await DatabaseService.shared.deleteReview(reviewId: reviewId)
+            reviews.removeAll { $0.id == reviewId }
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 }

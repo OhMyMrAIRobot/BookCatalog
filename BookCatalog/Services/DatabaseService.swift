@@ -180,4 +180,12 @@ class DatabaseService {
             throw error
         }
     }
+    
+    func deleteReview(reviewId: String) async throws {
+        do {
+            try await reviewsRef.document(reviewId).delete()
+        } catch {
+            throw error
+        }
+    }
 }
