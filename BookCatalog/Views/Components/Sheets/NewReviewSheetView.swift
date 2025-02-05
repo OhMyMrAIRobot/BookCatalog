@@ -105,6 +105,7 @@ struct NewReviewSheetView: View {
                             await bookViewModel.postReview(review: newReview)
                             isPresented = false
                             ratingViewModel.updateBookRating(bookId: bookViewModel.book.id, reviews: bookViewModel.reviews)
+                            bookViewModel.sortReviews()
                         }
                     }) {
                         Text("Post review")

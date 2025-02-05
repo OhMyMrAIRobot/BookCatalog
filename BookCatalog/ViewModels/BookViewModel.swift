@@ -13,9 +13,22 @@ class BookViewModel: ObservableObject {
     @Published var genre: Genre
     @Published var language: BookLanguage
     @Published var reviews: [Review] = []
+    
     @Published var profiles: [String: Profile] = [:]
     @Published var rating: Double
-
+    @Published var selectedSortOption: ReviewSortOption = .dateDescending {
+        didSet {
+            sortReviews()
+        }
+    }
+    
+    enum ReviewSortOption: String, CaseIterable {
+        case dateDescending = "Date descending (newest → oldest)"
+        case dateAscending = "Date ascending (oldest → newest)"
+        case ratingDescending = "Stars descending"
+        case ratingAscending = "Stars ascending"
+    }
+    
     
     init(book: Book, author: Author, genre: Genre, language: BookLanguage, rating: Double) {
         self.book = book
@@ -29,6 +42,7 @@ class BookViewModel: ObservableObject {
     func fetchReviews() async {
         do {
             reviews = try await DatabaseService.shared.getReviewsByBookId(bookId: book.id)
+            sortReviews()
         } catch {
             print(error.localizedDescription)
         }
@@ -67,6 +81,19 @@ class BookViewModel: ObservableObject {
             reviews.removeAll { $0.id == reviewId }
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    func sortReviews() {
+        switch selectedSortOption {
+        case .dateDescending:
+            reviews.sort { $0.date.dateValue() > $1.date.dateValue() }
+        case .dateAscending:
+            reviews.sort { $0.date.dateValue() < $1.date.dateValue() }
+        case .ratingDescending:
+            reviews.sort { $0.rating > $1.rating }
+        case .ratingAscending:
+            reviews.sort { $0.rating < $1.rating }
         }
     }
 }

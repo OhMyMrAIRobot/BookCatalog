@@ -12,9 +12,6 @@ struct BookView: View {
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel
     @State private var selectedRating: Int? = nil
-    @State private var isAddSheetActive = false
-    
-    private let userId = AuthService.shared.getUserId() ?? ""
 
     var body: some View {
         ScrollView() {
@@ -109,57 +106,15 @@ struct BookView: View {
             
             Divider()
                 .padding(.top, 10)
-
-            HStack(alignment: .center) {
-                Button(action: {
-                    
-                }) {
-                    Image(systemName: "slider.horizontal.3")
-                }
-                .font(.system(size: 12))
-                .fontWeight(.semibold)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.white)
-                .foregroundColor(.black)
-                .clipShape(Capsule())
     
-                Spacer()
-                
-                Button(action: {
-                    isAddSheetActive.toggle()
-                }) {
-                    Text("+ Review")
-                }
-                .font(.system(size: 12))
-                .fontWeight(.semibold)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.black)
-                .foregroundColor(.white)
-                .clipShape(Capsule())
-            }
-            .padding(.top, 10)
-            .sheet(isPresented: $isAddSheetActive) {
-                NewReviewSheetView(
-                    isPresented: $isAddSheetActive,
-                    sheetTitle: "Post new review",
-                    bookTitle: bookViewModel.book.title,
-                    name: "Name Surname",
-                    review: bookViewModel.reviews.first(where: { $0.userId == userId })
-                )
-                .presentationDetents([.large, .fraction(0.8)])
-                .presentationDragIndicator(.visible)
+            ReviewFiltersBarView(selectedRating: $selectedRating)
                 .environmentObject(bookViewModel)
-            }
-    
-            ReviewFiltersBar(selectedRating: $selectedRating)
 
             VStack(spacing: 20) {
                 ForEach(bookViewModel.reviews.filter { selectedRating == nil || $0.rating == selectedRating }) { review in
                     ReviewView(review: review,
                                profile: bookViewModel.profiles[review.userId] ?? Profile(id: "", email: "", age: 4),
-                               userId: userId
+                               userId: "123"
                     )
                     .environmentObject(bookViewModel)
                 }
