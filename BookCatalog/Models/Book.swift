@@ -9,12 +9,12 @@ import Foundation
 
 public struct Book: Identifiable, Codable, Hashable {
     public var id: String
-    var title : String
+    var title: String
     var description: String
-    var publishedYear : Int
+    var publishedYear: Int
     var ageRestriction: Int
-    var authorId : String
-    var genreId : String
-    var languageId : String
-    var images : [String]
+    var authorId: String
+    var genreId: String
+    var languageId: String
+    var images: [String]
 }

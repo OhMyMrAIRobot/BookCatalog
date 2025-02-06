@@ -22,6 +22,6 @@ struct ProfileView : View {
     }
 }
 
-#Preview {
-    FavouriteView()
-}
+//#Preview {
+//    FavouriteView()
+//}

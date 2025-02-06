@@ -11,25 +11,27 @@ import Firebase
 
 struct AccessControlView: View {
     @ObservedObject private var authService = AuthService.shared
+    @State private var navigationPathMain = NavigationPath()
+    @State private var navigationPathFavourite = NavigationPath()
     
     @ObservedObject private var favouriteViewModel = FavouriteViewModel()
     @ObservedObject private var catalogViewModel = CatalogViewModel()
     @ObservedObject private var ratingViewModel = RatingViewModel()
-    
+
     @State private var selectedTab = 0
     
     var body: some View {
         VStack(spacing: 0) {
             if authService.isLoggedIn { // authService.isLoggedIn
                 TabView(selection: $selectedTab) {
-                    MainView()
+                    MainView(navigationPath: $navigationPathMain)
                         .tag(0)
                         .environmentObject(favouriteViewModel)
                         .environmentObject(catalogViewModel)
                         .environmentObject(ratingViewModel)
                     
                     
-                    FavouriteView()
+                    FavouriteView(navigationPath: $navigationPathFavourite)
                         .tag(1)
                         .environmentObject(favouriteViewModel)
                         .environmentObject(catalogViewModel)
@@ -53,6 +55,12 @@ struct AccessControlView: View {
         }
         .background(Color(.systemGray6))
         .edgesIgnoringSafeArea(.bottom)
+        .onChange(of: authService.isLoggedIn) { newValue, oldValue in
+            selectedTab = 0
+            print("test")
+            navigationPathMain = NavigationPath()
+            navigationPathFavourite = NavigationPath()
+        }
     }
 }
 

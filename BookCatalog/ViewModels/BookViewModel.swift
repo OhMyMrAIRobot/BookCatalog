@@ -23,10 +23,10 @@ class BookViewModel: ObservableObject {
     }
     
     enum ReviewSortOption: String, CaseIterable {
-        case dateDescending = "Date descending (newest → oldest)"
-        case dateAscending = "Date ascending (oldest → newest)"
-        case ratingDescending = "Stars descending"
-        case ratingAscending = "Stars ascending"
+        case dateDescending = "Date descending (Newest first)"
+        case dateAscending = "Date ascending (Oldest first)"
+        case ratingDescending = "Rating (High to Low)"
+        case ratingAscending = "Rating (Low to High)"
     }
     
     

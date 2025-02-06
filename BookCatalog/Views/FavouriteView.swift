@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct FavouriteView : View {
+    @ObservedObject var authService = AuthService.shared
     
-    @State var navigationPath = NavigationPath()
+    @Binding var navigationPath: NavigationPath
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @EnvironmentObject var catalogViewModel: CatalogViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel

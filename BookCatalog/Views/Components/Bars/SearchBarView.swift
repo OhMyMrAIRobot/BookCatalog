@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct SearchBarView : View {
+    @EnvironmentObject var catalogViewModel: CatalogViewModel
+    @EnvironmentObject var ratingViewModel: RatingViewModel
+    
     @Binding var searchText: String
-    @State private var isFilterActive: Bool = false
+    @State private var isFilterSheetPresented: Bool = false
     
     var body : some View {
         HStack {
@@ -19,19 +22,32 @@ struct SearchBarView : View {
             TextField("Search books here...", text: $searchText)
                 .autocorrectionDisabled(true)
                 .accentColor(.black)
+                .onChange(of: searchText) {
+                    catalogViewModel.filterBooks(bookRatings: ratingViewModel.bookRatings)
+                }
             
             Button(action: {
-                isFilterActive.toggle()
+                isFilterSheetPresented.toggle()
             }) {
                 Image(systemName: "line.horizontal.3.decrease")
                     .font(.title)
                     .background(.white)
-                    .foregroundColor(isFilterActive ? .black : .gray)
+                    .foregroundColor(catalogViewModel.selectedGenres.isEmpty &&
+                                     catalogViewModel.selectedLanguages.isEmpty  ?
+                        .gray : .black)
             }
             .padding(.trailing, 10)
-            .sheet(isPresented: $isFilterActive) {
-                FilterModalView(isPresented: $isFilterActive)
-                    .presentationDetents([.large, .fraction(0.5)])
+            .sheet(isPresented: $isFilterSheetPresented) {
+                BookFilterSheetView(
+                    isPresented: $isFilterSheetPresented,
+                    selectedGenres: $catalogViewModel.selectedGenres,
+                    selectedLanguages: $catalogViewModel.selectedLanguages,
+                    selectedSortOption: $catalogViewModel.selectedSortOption,
+                    minAge: $catalogViewModel.minAgeFilter,
+                    maxAge: $catalogViewModel.maxAgeFilter,
+                    minYear: $catalogViewModel.minYearFilter,
+                    maxYear: $catalogViewModel.maxYearFilter
+                )
                     .presentationDragIndicator(.visible)
             }
         }

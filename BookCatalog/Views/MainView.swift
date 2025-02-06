@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct MainView: View {
+    @ObservedObject var authService = AuthService.shared
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @EnvironmentObject var catalogViewModel : CatalogViewModel
     @EnvironmentObject var ratingViewModel : RatingViewModel
-    @State private var navigationPath = NavigationPath()
+    @Binding var navigationPath: NavigationPath
     
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -55,6 +56,7 @@ struct MainView: View {
         }
         .onAppear {
             Task {
+                print("appear")
                 await catalogViewModel.fetchBooks()
                 await catalogViewModel.fetchAuthors()
                 await catalogViewModel.fetchGenres()
