@@ -24,7 +24,7 @@ class AuthService : ObservableObject {
     }
     
     @MainActor
-    func signIn(email: String, password: String) async throws -> () {
+    func signIn(email: String, password: String) async throws {
         do {
             try await auth.signIn(withEmail: email, password: password)
             self.isLoggedIn = true
@@ -35,7 +35,7 @@ class AuthService : ObservableObject {
     }
     
     @MainActor
-    func register(email: String, password: String, age: Int) async throws -> () {
+    func register(email: String, password: String, age: Int) async throws {
         do {
             let result = try await auth.createUser(withEmail: email, password: password)
             let profile = Profile(id: result.user.uid, email: email, age: age)
@@ -56,6 +56,15 @@ class AuthService : ObservableObject {
             }
         } catch {
             
+        }
+    }
+    
+    
+    func deleteUser() async throws {
+        do {
+            try await auth.currentUser?.delete()
+        } catch {
+            throw error
         }
     }
     

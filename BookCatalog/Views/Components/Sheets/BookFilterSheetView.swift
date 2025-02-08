@@ -24,7 +24,7 @@ struct BookFilterSheetView: View {
     let years = Array(1500...Calendar.current.component(.year, from: Date()))
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section(header: Text("Genres")) {
                     NavigationLink("Select Genres",
@@ -59,6 +59,7 @@ struct BookFilterSheetView: View {
                         Picker("", selection: $minYear) {
                             ForEach(years, id: \.self) { year in
                                 Text("\(year)").tag(year)
+                                    .foregroundColor(.black)
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
@@ -70,6 +71,7 @@ struct BookFilterSheetView: View {
                         Picker("", selection: $maxYear) {
                             ForEach(years, id: \.self) { year in
                                 Text("\(year)").tag(year)
+                                    .foregroundColor(.black)
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
@@ -94,55 +96,31 @@ struct BookFilterSheetView: View {
                     Button("Cancel") {
                         isPresented = false
                     }
+                    .foregroundColor(.black)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Apply") {
                         isPresented = false
                         catalogViewModel.filterBooks(bookRatings: ratingViewModel.bookRatings)
                     }
+                    .foregroundColor(.black)
                 }
             }
         }
-    }
-}
-
-
-struct MultiSelectListView: View {
-    let items: [String]
-    @Binding var selectedItems: Set<String>
-    let itemNameProvider: (String) -> String
-    
-    var body: some View {
-        List(items, id: \..self) { item in
-            HStack {
-                Text(itemNameProvider(item))
-                Spacer()
-                if selectedItems.contains(item) {
-                    Image(systemName: "checkmark")
-                }
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                if selectedItems.contains(item) {
-                    selectedItems.remove(item)
-                } else {
-                    selectedItems.insert(item)
-                }
-            }
-        }
-        .navigationTitle("Select Items")
     }
 }
 
 
 struct SortSelectionView: View {
     @Binding var selectedSortOption: CatalogViewModel.SortOption
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         List {
             ForEach(CatalogViewModel.SortOption.allCases, id: \..self) { option in
                 Button {
                     selectedSortOption = option
+                    dismiss()
                 } label: {
                     HStack {
                         Text(option.rawValue)
@@ -158,6 +136,6 @@ struct SortSelectionView: View {
                 .foregroundColor(.black)
             }
         }
-        .navigationTitle("Sort Books")
+        .navigationTitle("Choose the sort type")
     }
 }

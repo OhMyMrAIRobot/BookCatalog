@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ReviewFiltersBarView: View {
     @EnvironmentObject var bookViewModel: BookViewModel
+    @EnvironmentObject var profileViewModel: ProfileViewModel
+    
     @Binding var selectedRating: Int?
     @State private var isAddSheetActive = false
     @State private var isFilterSheetActive = false
@@ -46,16 +48,22 @@ struct ReviewFiltersBarView: View {
         }
         .padding(.top, 10)
         .sheet(isPresented: $isAddSheetActive) {
-            NewReviewSheetView(
-                isPresented: $isAddSheetActive,
-                sheetTitle: "Post new review",
-                bookTitle: bookViewModel.book.title,
-                name: "Name Surname",
-                review: bookViewModel.reviews.first(where: { $0.userId == userId })
-            )
-            .presentationDetents([.large, .fraction(0.8)])
-            .presentationDragIndicator(.visible)
-            .environmentObject(bookViewModel)
+            if let profile = profileViewModel.profile {
+                NewReviewSheetView(
+                    isPresented: $isAddSheetActive,
+                    sheetTitle: "Post new review",
+                    bookTitle: bookViewModel.book.title,
+                    name: profile.name.isEmpty && profile.surname.isEmpty ? "Unknown user" : "\(profile.name) \(profile.surname)",
+                    review: bookViewModel.reviews.first(where: { $0.userId == userId })
+                )
+                .presentationDetents([.large, .fraction(0.8)])
+                .presentationDragIndicator(.visible)
+                .environmentObject(bookViewModel)
+            } else {
+                ProgressView("Loading...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+
         }
         .sheet(isPresented: $isFilterSheetActive) {
             ReviewFilterSheetView(isPresented: $isFilterSheetActive)

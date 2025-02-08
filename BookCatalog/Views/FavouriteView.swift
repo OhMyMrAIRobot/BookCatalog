@@ -11,9 +11,11 @@ struct FavouriteView : View {
     @ObservedObject var authService = AuthService.shared
     
     @Binding var navigationPath: NavigationPath
+    
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @EnvironmentObject var catalogViewModel: CatalogViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel
+    @EnvironmentObject var profileViewModel: ProfileViewModel
     
     var body : some View {
         NavigationStack(path: $navigationPath) {
@@ -47,6 +49,7 @@ struct FavouriteView : View {
                         ))
                         .environmentObject(ratingViewModel)
                         .environmentObject(favouriteViewModel)
+                        .environmentObject(profileViewModel)
                     }
                 }
             }

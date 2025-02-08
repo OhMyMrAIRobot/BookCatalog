@@ -17,6 +17,7 @@ struct AccessControlView: View {
     @ObservedObject private var favouriteViewModel = FavouriteViewModel()
     @ObservedObject private var catalogViewModel = CatalogViewModel()
     @ObservedObject private var ratingViewModel = RatingViewModel()
+    @ObservedObject private var profileViewModel = ProfileViewModel()
 
     @State private var selectedTab = 0
     
@@ -29,6 +30,7 @@ struct AccessControlView: View {
                         .environmentObject(favouriteViewModel)
                         .environmentObject(catalogViewModel)
                         .environmentObject(ratingViewModel)
+                        .environmentObject(profileViewModel)
                     
                     
                     FavouriteView(navigationPath: $navigationPathFavourite)
@@ -36,9 +38,12 @@ struct AccessControlView: View {
                         .environmentObject(favouriteViewModel)
                         .environmentObject(catalogViewModel)
                         .environmentObject(ratingViewModel)
+                        .environmentObject(profileViewModel)
                     
                     ProfileView()
                         .tag(2)
+                        .environmentObject(profileViewModel)
+                        .environmentObject(catalogViewModel)
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .onAppear {
@@ -57,7 +62,6 @@ struct AccessControlView: View {
         .edgesIgnoringSafeArea(.bottom)
         .onChange(of: authService.isLoggedIn) { newValue, oldValue in
             selectedTab = 0
-            print("test")
             navigationPathMain = NavigationPath()
             navigationPathFavourite = NavigationPath()
         }

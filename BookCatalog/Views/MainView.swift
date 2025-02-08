@@ -9,9 +9,12 @@ import SwiftUI
 
 struct MainView: View {
     @ObservedObject var authService = AuthService.shared
+    
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
-    @EnvironmentObject var catalogViewModel : CatalogViewModel
-    @EnvironmentObject var ratingViewModel : RatingViewModel
+    @EnvironmentObject var catalogViewModel: CatalogViewModel
+    @EnvironmentObject var ratingViewModel: RatingViewModel
+    @EnvironmentObject var profileViewModel: ProfileViewModel
+    
     @Binding var navigationPath: NavigationPath
     
     var body: some View {
@@ -51,6 +54,7 @@ struct MainView: View {
                     ))
                     .environmentObject(ratingViewModel)
                     .environmentObject(favouriteViewModel)
+                    .environmentObject(profileViewModel)
                 }
             }
         }

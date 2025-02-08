@@ -9,8 +9,11 @@ import FirebaseAuth
 
 struct BookView: View {
     @ObservedObject var bookViewModel: BookViewModel
+    
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel
+    @EnvironmentObject var profileViewModel: ProfileViewModel
+    
     @State private var selectedRating: Int? = nil
 
     var body: some View {
@@ -109,12 +112,13 @@ struct BookView: View {
     
             ReviewFiltersBarView(selectedRating: $selectedRating)
                 .environmentObject(bookViewModel)
+                .environmentObject(profileViewModel)
 
             VStack(spacing: 20) {
                 ForEach(bookViewModel.reviews.filter { selectedRating == nil || $0.rating == selectedRating }) { review in
                     ReviewView(review: review,
-                               profile: bookViewModel.profiles[review.userId] ?? Profile(id: "", email: "", age: 4),
-                               userId: "123"
+                               profile: profileViewModel.reviewProfiles[review.userId] ?? Profile(id: "", email: "", age: 0),
+                               userId: profileViewModel.userId
                     )
                     .environmentObject(bookViewModel)
                 }
@@ -128,7 +132,7 @@ struct BookView: View {
         .onAppear {
             Task {
                 await bookViewModel.fetchReviews()
-                await bookViewModel.fetchProfiles()
+                await profileViewModel.fetchReviewProfiles(reviews: bookViewModel.reviews)
             }
         }
     }

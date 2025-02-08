@@ -30,6 +30,7 @@ struct ReviewView: View {
                          : "\(profile.name) \(profile.surname)")
                     .font(.system(size: 16))
                     .fontWeight(.semibold)
+                    .lineLimit(1)
                     
                     Text(review.date.dateValue().formatted(date: .numeric, time: .omitted))
                         .font(.system(size: 12))
@@ -69,9 +70,3 @@ struct ReviewView: View {
         .shadow(radius: 3)
     }
 }
-
-//#Preview {
-//    ReviewView(review: Review(
-//        bookId: "123", rating: 4, text: "Displaying dates in SwiftUI has been made so easy now, that there is almost no reason to use DateFormatter anymore to display dates in SwiftUI. We will go over several examples to show how powerful this API has become, and there are more configurations that we aren’t going to show here. Hopefully, this article encourages you to check out everything you can do with dates and times in your app."),
-//        profile: Profile(id: "123", email: "email", age: 56))
-//}

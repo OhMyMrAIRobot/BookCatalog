@@ -13,8 +13,6 @@ class BookViewModel: ObservableObject {
     @Published var genre: Genre
     @Published var language: BookLanguage
     @Published var reviews: [Review] = []
-    
-    @Published var profiles: [String: Profile] = [:]
     @Published var rating: Double
     @Published var selectedSortOption: ReviewSortOption = .dateDescending {
         didSet {
@@ -45,18 +43,6 @@ class BookViewModel: ObservableObject {
             sortReviews()
         } catch {
             print(error.localizedDescription)
-        }
-    }
-    
-    @MainActor
-    func fetchProfiles() async {
-        for review in reviews {
-            do {
-                let profile = try await DatabaseService.shared.getProfileById(profileId: review.userId)
-                profiles[profile.id] = profile
-            } catch {
-                print(error.localizedDescription)
-            }
         }
     }
     

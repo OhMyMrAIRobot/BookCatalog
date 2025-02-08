@@ -25,7 +25,7 @@ struct RegisterView : View {
                 Image("Book")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 150, height: 150) // TODO: сделать относительно границ экрана
+                    .frame(width: 150, height: 150)
                     .padding(.top, 30.0)
 
                 

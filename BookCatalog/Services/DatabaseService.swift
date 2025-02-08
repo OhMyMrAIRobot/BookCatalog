@@ -181,9 +181,23 @@ class DatabaseService {
         }
     }
     
+    
     func deleteReview(reviewId: String) async throws {
         do {
             try await reviewsRef.document(reviewId).delete()
+        } catch {
+            throw error
+        }
+    }
+    
+    
+    func deleteProfile() async throws {
+        guard let userId = AuthService.shared.getUserId() else {
+            throw NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No user id found"])
+        }
+        
+        do {
+            try await profilesRef.document(userId).delete()
         } catch {
             throw error
         }
