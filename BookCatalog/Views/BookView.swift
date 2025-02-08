@@ -8,7 +8,7 @@ import SwiftUI
 import FirebaseAuth
 
 struct BookView: View {
-    @ObservedObject var bookViewModel: BookViewModel
+    @StateObject var bookViewModel: BookViewModel
     
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel
@@ -20,12 +20,23 @@ struct BookView: View {
         ScrollView() {
             AsyncImage(url: URL(string: bookViewModel.book.images.isEmpty ?
                                 "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png"
-                                :  bookViewModel.book.images[0])) { image in
-                image.image?.resizable()
-            }.frame(maxWidth: 200, maxHeight: 300)
-                .clipped()
-                .cornerRadius(10)
-                .padding(.top, 15)
+                                :  bookViewModel.book.images[0])) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                case .success(let image):
+                    image
+                        .resizable()
+                case .failure:
+                    Text("Failed to load image")
+                @unknown default:
+                    EmptyView()
+                }
+            }
+            .frame(maxWidth: 200, maxHeight: 300)
+            .clipped()
+            .cornerRadius(10)
             
             
             Text(bookViewModel.book.title)
@@ -112,7 +123,6 @@ struct BookView: View {
     
             ReviewFiltersBarView(selectedRating: $selectedRating)
                 .environmentObject(bookViewModel)
-                .environmentObject(profileViewModel)
 
             VStack(spacing: 20) {
                 ForEach(bookViewModel.reviews.filter { selectedRating == nil || $0.rating == selectedRating }) { review in

@@ -17,8 +17,19 @@ struct ImageCarouselView: View {
         ZStack {
             TabView(selection: $currentIndex) {
                 ForEach(Array(book.images.enumerated()), id: \.offset) { index, imgUrl in
-                    AsyncImage(url: URL(string: imgUrl)) { image in
-                        image.image?.resizable()
+                    AsyncImage(url: URL(string: imgUrl)) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                        case .success(let image):
+                            image
+                                .resizable()
+                        case .failure:
+                            Text("Failed to load image")
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 380)

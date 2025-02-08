@@ -14,6 +14,7 @@ struct ReviewFiltersBarView: View {
     @Binding var selectedRating: Int?
     @State private var isAddSheetActive = false
     @State private var isFilterSheetActive = false
+    @State private var isProfileLoading = true
     private let userId = AuthService.shared.getUserId() ?? ""
     
     var body: some View {
@@ -48,22 +49,29 @@ struct ReviewFiltersBarView: View {
         }
         .padding(.top, 10)
         .sheet(isPresented: $isAddSheetActive) {
-            if let profile = profileViewModel.profile {
-                NewReviewSheetView(
-                    isPresented: $isAddSheetActive,
-                    sheetTitle: "Post new review",
-                    bookTitle: bookViewModel.book.title,
-                    name: profile.name.isEmpty && profile.surname.isEmpty ? "Unknown user" : "\(profile.name) \(profile.surname)",
-                    review: bookViewModel.reviews.first(where: { $0.userId == userId })
-                )
-                .presentationDetents([.large, .fraction(0.8)])
-                .presentationDragIndicator(.visible)
-                .environmentObject(bookViewModel)
+            if !isProfileLoading {
+                if let profile = profileViewModel.profile {
+                    NewReviewSheetView(
+                        isPresented: $isAddSheetActive,
+                        sheetTitle: "Post new review",
+                        bookTitle: bookViewModel.book.title,
+                        name: profile.name.isEmpty && profile.surname.isEmpty ? "Unknown user" : "\(profile.name) \(profile.surname)",
+                        review: bookViewModel.reviews.first(where: { $0.userId == userId })
+                    )
+                    .presentationDetents([.large, .fraction(0.8)])
+                    .presentationDragIndicator(.visible)
+                    //                .environmentObject(bookViewModel)
+                }
             } else {
-                ProgressView("Loading...")
+                ProgressView("Loading profile...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onAppear {
+                        Task {
+                            await profileViewModel.fetchProfile()
+                            isProfileLoading = false
+                        }
+                    }
             }
-
         }
         .sheet(isPresented: $isFilterSheetActive) {
             ReviewFilterSheetView(isPresented: $isFilterSheetActive)

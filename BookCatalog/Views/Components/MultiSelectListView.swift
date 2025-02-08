@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MultiSelectListView: View {
+    let title: String
     let items: [String]
     @Binding var selectedItems: Set<String>
     let itemNameProvider: (String) -> String
@@ -30,6 +31,6 @@ struct MultiSelectListView: View {
                 }
             }
         }
-        .navigationTitle("Select Items")
+        .navigationTitle(title)
     }
 }

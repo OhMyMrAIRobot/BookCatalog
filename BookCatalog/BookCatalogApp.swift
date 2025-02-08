@@ -19,11 +19,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct BookCatalogApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var authService = AuthService.shared
     
     var body: some Scene {
         WindowGroup {
-            AccessControlView()
-                .preferredColorScheme(.light)
+            NavigationStack {
+                AccessControlView()
+                    .environmentObject(authService)
+                    .preferredColorScheme(.light)
+            }
         }
     }
 }

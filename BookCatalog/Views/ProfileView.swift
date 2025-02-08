@@ -33,7 +33,14 @@ struct ProfileView: View {
                         Image(systemName: "rectangle.portrait.and.arrow.right")
                             .bold()
                             .font(.system(size: 18))
-                            .onTapGesture { }
+                            .onTapGesture {
+                                do {
+                                    try AuthService.shared.signOut()
+                                } catch {
+                                    
+                                }
+
+                            }
                     }
                     
                     Text("gfhieemobilelegendsgmail.com")

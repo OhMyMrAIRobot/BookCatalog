@@ -16,7 +16,7 @@ struct EditProfileView: View {
     @State private var selectedAuthors: Set<String> = []
     
     var body: some View {
-        NavigationStack {
+      //  NavigationStack {
             Text("Edit profile")
                 .font(.system(size: 32))
                 .fontDesign(.rounded)
@@ -32,11 +32,11 @@ struct EditProfileView: View {
                 ProfileRow(title: "Country", value: profileViewModel.profile?.country ?? "", field: "country")
                 ProfileRow(title: "About", value: profileViewModel.profile?.about ?? "", field: "about")
                 
-                NavigationLink("Select Genres",
-                    destination: MultiSelectListView(items: catalogViewModel.genres.keys.sorted(),
-                                                     selectedItems: $selectedGenres,
-                                                     itemNameProvider: { catalogViewModel.genres[$0]?.name ?? "" })
-                )
+//                NavigationLink("Select Genres",
+//                    destination: MultiSelectListView(items: catalogViewModel.genres.keys.sorted(),
+//                                                     selectedItems: $selectedGenres,
+//                                                     itemNameProvider: { catalogViewModel.genres[$0]?.name ?? "" })
+//                )
                 
 //                NavigationLink("Select Authors",
 //                    destination: MultiSelectListView(items: catalogViewModel.genres.keys.sorted(),
@@ -44,8 +44,7 @@ struct EditProfileView: View {
 //                                                     itemNameProvider: { catalogViewModel.genres[$0]?.name ?? "" })
 //                )
             }
-        }
-        .navigationTitle("edit")
+        //}
     }
 }
 

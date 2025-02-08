@@ -14,7 +14,7 @@ struct SearchBarView : View {
     @Binding var searchText: String
     @State private var isFilterSheetPresented: Bool = false
     
-    var body : some View {
+    var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
@@ -32,9 +32,7 @@ struct SearchBarView : View {
                 Image(systemName: "line.horizontal.3.decrease")
                     .font(.title)
                     .background(.white)
-                    .foregroundColor(catalogViewModel.selectedGenres.isEmpty &&
-                                     catalogViewModel.selectedLanguages.isEmpty  ?
-                        .gray : .black)
+                    .foregroundColor(.gray)
             }
             .padding(.trailing, 10)
             .sheet(isPresented: $isFilterSheetPresented) {
@@ -48,7 +46,7 @@ struct SearchBarView : View {
                     minYear: $catalogViewModel.minYearFilter,
                     maxYear: $catalogViewModel.maxYearFilter
                 )
-                    .presentationDragIndicator(.visible)
+                .presentationDragIndicator(.visible)
             }
         }
         .padding(15)
@@ -58,7 +56,3 @@ struct SearchBarView : View {
     }
 }
 
-//#Preview {
-//    @State var text: String = ""
-//    SearchBarView(searchText: $text)
-//}

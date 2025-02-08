@@ -15,7 +15,7 @@ struct RegisterView : View {
     @State private var age : Double = 6
     
     var body: some View {
-        NavigationStack {
+//        NavigationStack {
             VStack {
                 
                 // Alerts
@@ -120,7 +120,7 @@ struct RegisterView : View {
                 
                 Spacer()
             }
-        }
+   //     }
     }
 }
 

@@ -75,6 +75,13 @@ class CatalogViewModel : ObservableObject {
         }
     }
 
+    @MainActor
+    func fetchData() async {
+        await fetchBooks()
+        await fetchAuthors()
+        await fetchGenres()
+        await fetchLanguages()
+    }
     
     func filterBooks(bookRatings: [String: Double]) {
         filteredBooks = books.filter { book in

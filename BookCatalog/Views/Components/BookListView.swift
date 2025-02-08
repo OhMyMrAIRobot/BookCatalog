@@ -23,10 +23,7 @@ struct BookListView: View{
                        let genre = genres[book.genreId],
                        let rating = ratings[book.id] {
                         
-                        NavigationLink(value: book) {
-                            BookCardView(book: book, author: author, genre: genre, rating: rating)
-                        }
-                        .buttonStyle(PlainButtonStyle())
+                        BookCardView(book: book, author: author, genre: genre, rating: rating)
                     }
                 }
             }
@@ -35,4 +32,5 @@ struct BookListView: View{
         .scrollIndicators(.hidden)
     }
 }
+
 

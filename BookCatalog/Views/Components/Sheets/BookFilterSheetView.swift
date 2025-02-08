@@ -15,7 +15,6 @@ struct BookFilterSheetView: View {
     @Binding var selectedGenres: Set<String>
     @Binding var selectedLanguages: Set<String>
     @Binding var selectedSortOption: CatalogViewModel.SortOption
-    
     @Binding var minAge: Int
     @Binding var maxAge: Int
     @Binding var minYear: Int
@@ -25,20 +24,26 @@ struct BookFilterSheetView: View {
     
     var body: some View {
         NavigationStack {
+            
             List {
                 Section(header: Text("Genres")) {
-                    NavigationLink("Select Genres",
-                        destination: MultiSelectListView(items: catalogViewModel.genres.keys.sorted(),
-                                                            selectedItems: $selectedGenres,
-                                                         itemNameProvider: { catalogViewModel.genres[$0]?.name ?? "" })
+                    NavigationLink("Select genres",
+                                   destination: MultiSelectListView(title: "Select Genres",
+                                                                    items: catalogViewModel.genres.keys.sorted(),
+                                                                    selectedItems: $selectedGenres,
+                                                                    itemNameProvider: { catalogViewModel.genres[$0]?.name ?? "" })
                     )
                 }
                 
                 Section(header: Text("Languages")) {
-                    NavigationLink("Select Languages", destination: MultiSelectListView(items: catalogViewModel.languages.keys.sorted(), selectedItems: $selectedLanguages, itemNameProvider: { catalogViewModel.languages[$0]?.name ?? "" }))
+                    NavigationLink("Select languages", destination: MultiSelectListView(title: "Select languages",
+                                                                                        items: catalogViewModel.languages.keys.sorted(),
+                                                                                        selectedItems: $selectedLanguages, itemNameProvider: {
+                                                                                        catalogViewModel.languages[$0]?.name ?? "" })
+                    )
                 }
                 
-                Section(header: Text("Age Range")) {
+                Section(header: Text("Age restriction range")) {
                     HStack {
                         Text("Min Age: \(minAge)")
                         Spacer()
@@ -52,7 +57,7 @@ struct BookFilterSheetView: View {
                 }
                 
                 
-                Section(header: Text("Publication Year Range")) {
+                Section(header: Text("Publication year range")) {
                     HStack {
                         Text("From")
                         Spacer()
@@ -79,12 +84,12 @@ struct BookFilterSheetView: View {
                 }
                 
                 
-                Section(header: Text("Sort By")) {
+                Section(header: Text("Sort by")) {
                     NavigationLink(destination: SortSelectionView(selectedSortOption: $selectedSortOption)) {
                         HStack {
                             Text("Selected: \(selectedSortOption.rawValue)")
                             Spacer()
-
+                            
                         }
                     }
                 }

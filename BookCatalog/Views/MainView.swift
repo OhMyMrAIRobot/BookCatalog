@@ -13,23 +13,22 @@ struct MainView: View {
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @EnvironmentObject var catalogViewModel: CatalogViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel
-    @EnvironmentObject var profileViewModel: ProfileViewModel
     
-    @Binding var navigationPath: NavigationPath
+    @State var isDataLoaded = false
+    @State var isLoading = true
     
     var body: some View {
-        NavigationStack(path: $navigationPath) {
-            VStack {
+        VStack {
+            if !isLoading {
                 Text("Book list")
                     .font(.system(size: 32))
-                    .fontDesign(.rounded) // TODO: найти норм шрифт
+                    .fontDesign(.rounded)
                     .fontWeight(.semibold)
                     .padding(.bottom, 20)
                     .padding(.leading, 15)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 SearchBarView(searchText: $catalogViewModel.searchText)
-                    .padding(.bottom, 20)
                 
                 BookListView(
                     books: catalogViewModel.filteredBooks.isEmpty ? catalogViewModel.books : catalogViewModel.filteredBooks,
@@ -37,39 +36,38 @@ struct MainView: View {
                     genres: catalogViewModel.genres,
                     ratings: ratingViewModel.bookRatings
                 )
+                .padding(.top, 20)
+                    
                 
+            } else {
+                ProgressView("Loading books...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .background(Color(.systemGray6))
-            .navigationDestination(for: Book.self) { book in
-                if let author = catalogViewModel.authors[book.authorId],
-                   let genre = catalogViewModel.genres[book.genreId],
-                   let language = catalogViewModel.languages[book.languageId],
-                   let rating = ratingViewModel.bookRatings[book.id] {
-                    BookView(bookViewModel: BookViewModel(
-                        book: book,
-                        author: author,
-                        genre: genre,
-                        language: language,
-                        rating: rating
-                    ))
-                    .environmentObject(ratingViewModel)
-                    .environmentObject(favouriteViewModel)
-                    .environmentObject(profileViewModel)
+        }
+        .background(Color(.systemGray6))
+        .onAppear {
+            Task {
+                if !isDataLoaded {
+                    print("fetch")
+                    await catalogViewModel.fetchData()
+                    await ratingViewModel.fetchBookRatings(books: catalogViewModel.books)
+                    await favouriteViewModel.fetchFavouriteBookIds()
+                    await MainActor.run {
+                        isDataLoaded = true
+                        isLoading = false
+                    }
                 }
             }
         }
-        .onAppear {
-            Task {
-                print("appear")
-                await catalogViewModel.fetchBooks()
-                await catalogViewModel.fetchAuthors()
-                await catalogViewModel.fetchGenres()
-                await catalogViewModel.fetchLanguages()
-                await ratingViewModel.fetchBookRatings(books: catalogViewModel.books)
-            }
+        .refreshable {
+            await catalogViewModel.fetchData()
+            await ratingViewModel.fetchBookRatings(books: catalogViewModel.books)
+            await favouriteViewModel.fetchFavouriteBookIds()
         }
     }
 }
+
 
 //#Preview {
 //    MainView()

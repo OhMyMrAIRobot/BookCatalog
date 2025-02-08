@@ -14,7 +14,7 @@ struct AuthView : View {
     @State private var errorMsg = ""
 
     var body: some View {
-        NavigationStack {
+        //NavigationStack {
 
             VStack {
                 
@@ -103,7 +103,7 @@ struct AuthView : View {
                 }.padding(.bottom, 35)
                 
             }
-        }
+        //}
     }
 }
 

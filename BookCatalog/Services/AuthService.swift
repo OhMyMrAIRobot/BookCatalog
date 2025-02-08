@@ -13,9 +13,13 @@ class AuthService : ObservableObject {
     static let shared = AuthService()
     private let auth = Auth.auth()
     @Published var isLoggedIn: Bool = false
+    @Published var isLoading: Bool = true
     
     private init() {
-        self.isLoggedIn = isAuth()
+        Task { @MainActor in
+            self.isLoggedIn = self.isAuth()
+            self.isLoading = false  // Завершаем проверку
+        }
 //        Auth.auth().addStateDidChangeListener { _, user in
 //            DispatchQueue.main.async {
 //                self.isLoggedIn = (user != nil)
@@ -47,15 +51,13 @@ class AuthService : ObservableObject {
         }
     }
     
-    
-    func signOut() {
+    @MainActor
+    func signOut() throws {
         do {
             try auth.signOut()
-            DispatchQueue.main.async {
-                self.isLoggedIn = false
-            }
+            self.isLoggedIn = false
         } catch {
-            
+            throw error
         }
     }
     

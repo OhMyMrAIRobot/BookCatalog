@@ -30,7 +30,7 @@ struct NewReviewSheetView: View {
     }
     
     var body: some View {
-        NavigationStack {
+     //   NavigationStack {
             VStack(spacing: 15) {
                 Text("How would you rate")
                     .font(.title)
@@ -125,7 +125,7 @@ struct NewReviewSheetView: View {
             .navigationTitle(sheetTitle)
 
         }
-    }
+  //  }
 }
 
 //#Preview {
