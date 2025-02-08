@@ -27,10 +27,6 @@ struct BookCardView : View {
                     case .empty:
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle())
-//                            .cornerRadius(10)
-//                            .frame(maxWidth: 90)
-//                            .clipped()
-//                            .shadow(color: Color.black.opacity(0.3), radius: 10, x: -2, y: 2)
                     case .success(let image):
                         image
                             .resizable()

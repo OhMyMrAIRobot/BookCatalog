@@ -29,7 +29,9 @@ struct BookFilterSheetView: View {
                 Section(header: Text("Genres")) {
                     NavigationLink("Select genres",
                                    destination: MultiSelectListView(title: "Select Genres",
-                                                                    items: catalogViewModel.genres.keys.sorted(),
+                                                                    items: catalogViewModel.genres.keys.sorted {
+                                                                        (catalogViewModel.genres[$0]?.name ?? "") < (catalogViewModel.genres[$1]?.name ?? "")
+                                                                    },
                                                                     selectedItems: $selectedGenres,
                                                                     itemNameProvider: { catalogViewModel.genres[$0]?.name ?? "" })
                     )
@@ -37,7 +39,9 @@ struct BookFilterSheetView: View {
                 
                 Section(header: Text("Languages")) {
                     NavigationLink("Select languages", destination: MultiSelectListView(title: "Select languages",
-                                                                                        items: catalogViewModel.languages.keys.sorted(),
+                                                                                        items: catalogViewModel.languages.keys.sorted {
+                        (catalogViewModel.languages[$0]?.name ?? "") < (catalogViewModel.languages[$1]?.name ?? "")
+                                                                                        },
                                                                                         selectedItems: $selectedLanguages, itemNameProvider: {
                                                                                         catalogViewModel.languages[$0]?.name ?? "" })
                     )
