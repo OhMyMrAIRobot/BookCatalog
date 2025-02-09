@@ -12,41 +12,21 @@ struct ReviewFilterSheetView: View {
     @EnvironmentObject var bookViewModel: BookViewModel
     
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(BookViewModel.ReviewSortOption.allCases, id: \.self) { option in
-                    Button {
-                        bookViewModel.selectedSortOption = option
-                        isPresented = false
-                    } label: {
-                        HStack {
-                            Text(option.rawValue)
-                                .fontWeight(bookViewModel.selectedSortOption == option ? .semibold : .regular)
-                            Spacer()
-                            if bookViewModel.selectedSortOption == option {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.black)
-                                    .fontWeight(.semibold)
-                            }
+        NavigationStack {
+            SingleSelectListView(
+                title: "Choose the sort type",
+                items: BookViewModel.ReviewSortOption.allCases.map { $0.rawValue },
+                selectedItem: Binding(
+                    get: { bookViewModel.selectedSortOption.rawValue },
+                    set: { newValue in
+                        if let newOption = BookViewModel.ReviewSortOption(rawValue: newValue ?? "unknown") {
+                            bookViewModel.selectedSortOption = newOption
                         }
-                    }.foregroundColor(.black)
-                }
-            }
-            .padding(.top, 10)
-            .navigationTitle("Choose the sort type")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
                         isPresented = false
                     }
-                    .foregroundColor(.black)
-                }
-            }
+                ),
+                itemNameProvider: { $0 }
+            )
         }
     }
 }
-
-//#Preview {
-//    @State var selectedSortOption: ReviewSortOption = .dateDescending
-//    ReviewFilterSheetView(isPresented: .constant(true), selectedSortOption: $selectedSortOption)
-//}

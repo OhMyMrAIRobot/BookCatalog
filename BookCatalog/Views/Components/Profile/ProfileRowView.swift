@@ -7,14 +7,16 @@
 
 import SwiftUI
 
-struct ProfileRow: View {
+struct ProfileRowView: View {
     let title: String
     let field: String
+    
     @State private var value: String
     @State private var isEditing: Bool = false
+    
     @EnvironmentObject var profileViewModel: ProfileViewModel
 
-    init(title: String, value: String, field: String, isEditable: Bool = true) {
+    init(title: String, value: String, field: String) {
         self.title = title
         self.field = field
         self._value = State(initialValue: value)
@@ -28,8 +30,10 @@ struct ProfileRow: View {
             
             if isEditing {
                 TextField("Enter \(title.lowercased())", text: $value, onCommit: {
-                    //profileViewModel.updateProfileField(field: field, value: value)
-                    isEditing = false
+                    Task {
+                        await profileViewModel.updateProfileField(field: field, value: value)
+                        isEditing = false
+                    }
                 })
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .frame(maxWidth: .infinity)
@@ -39,7 +43,12 @@ struct ProfileRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            Button(action: { isEditing.toggle() }) {
+            Button(action: {Task {
+                if isEditing {
+                    await profileViewModel.updateProfileField(field: field, value: value)
+                }
+                isEditing.toggle()
+            }}) {
                 Image(systemName: isEditing ? "checkmark.circle.fill" : "pencil")
                     .foregroundColor(isEditing ? .green : .black)
             }

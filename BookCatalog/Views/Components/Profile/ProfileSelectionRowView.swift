@@ -1,5 +1,5 @@
 //
-//  ProfileSelectionRow.swift
+//  ProfileSelectionRowView.swift
 //  BookCatalog
 //
 //  Created by Daniil on 9.02.25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileSelectionRow: View {
+struct ProfileSelectionRowView: View {
     let title: String
     let selectedItems: Set<String>
     let onTap: () -> Void

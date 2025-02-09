@@ -12,8 +12,8 @@ struct EditProfileView: View {
     @EnvironmentObject var catalogViewModel: CatalogViewModel
     
     @State private var isEditing = false
-    @State private var selectedGenres: Set<String> = []
-    @State private var selectedAuthors: Set<String> = []
+    
+    @State private var selectedAge: Int = 18
     
     var body: some View {
         Text("Edit profile")
@@ -25,23 +25,45 @@ struct EditProfileView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
         VStack(spacing: 16) {
-            ProfileRow(title: "Name", value: profileViewModel.profile?.name ?? "", field: "name")
-            ProfileRow(title: "Surname", value: profileViewModel.profile?.surname ?? "", field: "surname")
-            ProfileRow(title: "Age", value: "\(profileViewModel.profile?.age ?? 0)", field: "age")
-            ProfileRow(title: "Country", value: profileViewModel.profile?.country ?? "", field: "country")
-            ProfileRow(title: "About", value: profileViewModel.profile?.about ?? "", field: "about")
+            ProfileRowView(title: "Name", value: profileViewModel.profile?.name ?? "", field: "name")
+            ProfileRowView(title: "Surname", value: profileViewModel.profile?.surname ?? "", field: "surname")
+            ProfileRowView(title: "Age", value: "\(profileViewModel.profile?.age ?? 0)", field: "age")
+            ProfileRowView(title: "Country", value: profileViewModel.profile?.country ?? "", field: "country")
+            ProfileRowView(title: "About", value: profileViewModel.profile?.about ?? "", field: "about")
+            
+            NavigationLink(destination: SingleSelectListView(
+                title: "Choose the gender",
+                items: ProfileViewModel.Gender.allCases.map { $0.rawValue },
+                selectedItem: Binding(
+                    get: { profileViewModel.selectedGender?.rawValue },
+                    set: { newValue in
+                        if let newOption = ProfileViewModel.Gender(rawValue: newValue ?? "unknown") {
+                            profileViewModel.selectedGender = newOption
+                        }
+                    }
+                ),
+                itemNameProvider: { $0 }
+            )) {
+                ProfileSelectionRowView(
+                    title: "Gender",
+                    selectedItems: profileViewModel.selectedGender.map { Set([$0.rawValue]) } ?? [],
+                    onTap: {},
+                    displayNames: { $0 }
+                )
+            }.buttonStyle(PlainButtonStyle())
+
             
             NavigationLink(destination: MultiSelectListView(
                 title: "Select genres",
                 items: catalogViewModel.genres.keys.sorted {
                     (catalogViewModel.genres[$0]?.name ?? "") < (catalogViewModel.genres[$1]?.name ?? "")
                 },
-                selectedItems: $selectedGenres,
+                selectedItems: $profileViewModel.selectedGenres,
                 itemNameProvider: { catalogViewModel.genres[$0]?.name ?? "" }
             )) {
-                ProfileSelectionRow(
+                ProfileSelectionRowView(
                     title: "Genres",
-                    selectedItems: selectedGenres,
+                    selectedItems: profileViewModel.selectedGenres,
                     onTap: {},
                     displayNames: { catalogViewModel.genres[$0]?.name ?? "" }
                 )
@@ -53,12 +75,12 @@ struct EditProfileView: View {
                 items: catalogViewModel.authors.keys.sorted {
                     (catalogViewModel.authors[$0]?.name ?? "") < (catalogViewModel.authors[$1]?.name ?? "")
                 },
-                selectedItems: $selectedAuthors,
+                selectedItems: $profileViewModel.selectedAuthors,
                 itemNameProvider: { "\(catalogViewModel.authors[$0]?.name ?? "") \(catalogViewModel.authors[$0]?.surname ?? "")"}
             )) {
-                ProfileSelectionRow(
+                ProfileSelectionRowView(
                     title: "Authors",
-                    selectedItems: selectedAuthors,
+                    selectedItems: profileViewModel.selectedAuthors,
                     onTap: {},
                     displayNames: { "\(catalogViewModel.authors[$0]?.name.prefix(1) ?? ""). \(catalogViewModel.authors[$0]?.surname ?? "")"
                     }

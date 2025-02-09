@@ -7,16 +7,15 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct ProfileView: View {
     @EnvironmentObject var profileViewModel: ProfileViewModel
     @EnvironmentObject var catalogViewModel: CatalogViewModel
     
+    @State var isDataLoaded = false
     @State private var isEditingProfile = false
     
     var body: some View {
-        VStack {
+        ScrollView {
             Image(systemName: "person.crop.circle.fill")
                 .resizable()
                 .frame(width: 100, height: 100)
@@ -24,7 +23,7 @@ struct ProfileView: View {
             
             if let profile = profileViewModel.profile {
                 HStack(spacing: 12) {
-                    Text("Daniil Khlyshchankou")
+                    Text(profile.name.isEmpty && profile.surname.isEmpty ? "Name not specified" : "\(profile.name) \(profile.surname)")
                         .font(.title)
                         .fontWeight(.bold)
                         .padding(.bottom, 0.5)
@@ -43,15 +42,15 @@ struct ProfileView: View {
                         }
                 }
                 
-                Text("gfhieemobilelegendsgmail.com")
+                Text(profile.email)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundColor(.gray)
                 
                 HStack() {
-                    ProfileInfoColumn(title: "Country", value: "Belarus")
-                    ProfileInfoColumn(title: "Age", value: "21")
-                    ProfileInfoColumn(title: "Gender", value: "Female")
+                    ProfileInfoColumn(title: "Country", value: profile.country.isEmpty ? "None" : profile.country)
+                    ProfileInfoColumn(title: "Age", value: "\(profile.age)")
+                    ProfileInfoColumn(title: "Gender", value: profile.gender.isEmpty ? "None" : profile.gender)
                 }
                 .padding(.horizontal, 0.5)
                 .padding(.vertical, 10)
@@ -95,30 +94,43 @@ struct ProfileView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 ExpandableTextView(
-                    fullText: "Lorem Ipsum is simply dummy text of the printing and typesetting industry...",
+                    fullText: profile.about,
                     lines: 3)
                 .font(.system(size: 18))
                 .padding(.top, 1)
                 .foregroundColor(Color(.black).opacity(0.6))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                ProfileTagSection(title: "Favourite genres", tags: ["Fantasy", "Novel", "Triller", "Art"])
+                ProfileTagSection(
+                    title: "Favourite genres",
+                    tags: profile.favGenreIds.compactMap { catalogViewModel.genres[$0]?.name }
+                )
                     .padding(.top, 15)
                 
-                ProfileTagSection(title: "Favourite authors", tags: ["J. Autsten", "K. Thorne", "O. Nechiporenko"])
+                ProfileTagSection(
+                    title: "Favourite authors",
+                    tags: profile.favAuthorIds.compactMap {"\(catalogViewModel.authors[$0]?.name.prefix(1) ?? ""). \(catalogViewModel.authors[$0]?.surname ?? "")"}
+                )
                     .padding(.top, 15)
             } else {
                 ProgressView("Loading profile...")
             }
         }
+        .scrollIndicators(.hidden)
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(.systemGray6))
         .edgesIgnoringSafeArea(.bottom)
         .onAppear {
             Task {
-                await profileViewModel.fetchProfile()
+                if !isDataLoaded {
+                    await profileViewModel.fetchProfile()
+                    isDataLoaded = true
+                }
             }
+        }
+        .refreshable {
+            await profileViewModel.fetchProfile()
         }
     }
 }
