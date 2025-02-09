@@ -78,9 +78,3 @@ struct ImageCarouselView: View {
         .frame(height: 380)
     }
 }
-
-
-
-//#Preview {
-//    ImageCarouselView(book: Book())
-//}

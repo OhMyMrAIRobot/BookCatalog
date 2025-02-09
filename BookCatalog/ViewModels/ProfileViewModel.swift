@@ -8,6 +8,12 @@
 import Foundation
 
 class ProfileViewModel: ObservableObject {
+    private let profileService: ProfileService
+    
+    init(container: ServiceContainer) {
+        self.profileService = container.profileService
+    }
+    
     enum Gender: String, CaseIterable {
         case male = "Male"
         case female = "Female"
@@ -15,7 +21,6 @@ class ProfileViewModel: ObservableObject {
     
     @Published var profile: Profile? = nil
     @Published var reviewProfiles: [String: Profile] = [:]
-    @Published var userId = AuthService.shared.getUserId()
     
     @Published var selectedAuthors: Set<String> = [] {
         didSet {
@@ -45,7 +50,8 @@ class ProfileViewModel: ObservableObject {
     @MainActor
     func fetchProfile() async {
         do {
-            let fetchedProfile = try await DatabaseService.shared.getProfileById(profileId: userId ?? "")
+            let userId = AuthService.shared.getUserId()
+            let fetchedProfile = try await profileService.getProfileById(profileId: userId ?? "")
             self.profile = fetchedProfile
             
             self.selectedAuthors = Set(fetchedProfile.favAuthorIds)
@@ -60,7 +66,7 @@ class ProfileViewModel: ObservableObject {
     func fetchReviewProfiles(reviews: [Review]) async {
         for review in reviews {
             do {
-                let profile = try await DatabaseService.shared.getProfileById(profileId: review.userId)
+                let profile = try await profileService.getProfileById(profileId: review.userId)
                 reviewProfiles[profile.id] = profile
             } catch {
                 print(error.localizedDescription)
@@ -118,7 +124,7 @@ class ProfileViewModel: ObservableObject {
         }
         
         do {
-            try await DatabaseService.shared.setProfile(profile: profile)
+            try await profileService.setProfile(profile: profile)
             self.profile = profile
         } catch {
             print(error.localizedDescription)

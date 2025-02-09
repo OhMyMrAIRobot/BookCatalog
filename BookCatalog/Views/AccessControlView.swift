@@ -10,12 +10,23 @@ import FirebaseAuth
 import Firebase
 
 struct AccessControlView: View {
-    @EnvironmentObject var authService: AuthService
+    let services: ServiceContainer
     
-    @StateObject private var favouriteViewModel = FavouriteViewModel()
-    @StateObject private var catalogViewModel = CatalogViewModel()
-    @StateObject private var ratingViewModel = RatingViewModel()
-    @StateObject private var profileViewModel = ProfileViewModel()
+    @EnvironmentObject var authService: AuthService
+
+    @StateObject private var favouriteViewModel: FavouriteViewModel
+    @StateObject private var catalogViewModel: CatalogViewModel
+    @StateObject private var ratingViewModel: RatingViewModel
+    @StateObject private var profileViewModel: ProfileViewModel
+    
+    init() {
+        let services = ServiceContainer()
+        self.services = services
+        _favouriteViewModel = StateObject(wrappedValue: FavouriteViewModel(container: services))
+        _catalogViewModel = StateObject(wrappedValue: CatalogViewModel(container: services))
+        _ratingViewModel = StateObject(wrappedValue: RatingViewModel(container: services))
+        _profileViewModel = StateObject(wrappedValue: ProfileViewModel(container: services))
+    }
     
     @State private var selectedTab = 0
     
@@ -25,7 +36,7 @@ struct AccessControlView: View {
                     ProgressView("Checking authorization...")
                         .progressViewStyle(CircularProgressViewStyle())
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if authService.isLoggedIn { // authService.isLoggedIn
+                } else if authService.isLoggedIn {
                     TabView(selection: $selectedTab) {
                         MainView()
                             .tag(0)
@@ -49,6 +60,7 @@ struct AccessControlView: View {
                     AuthView()
                 }
             }
+            .environmentObject(services)
             .background(Color(.systemGray6))
             .edgesIgnoringSafeArea(.bottom)
             .onChange(of: authService.isLoggedIn) { newValue, oldValue in
@@ -58,7 +70,3 @@ struct AccessControlView: View {
     }
 }
 
-
-#Preview {
-    AccessControlView()
-}

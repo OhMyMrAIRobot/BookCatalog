@@ -8,6 +8,8 @@
 import Foundation
 
 class BookViewModel: ObservableObject {
+    private let reviewService: ReviewService
+    
     @Published var book: Book
     @Published var author: Author
     @Published var genre: Genre
@@ -28,7 +30,8 @@ class BookViewModel: ObservableObject {
     }
     
     
-    init(book: Book, author: Author, genre: Genre, language: BookLanguage, rating: Double) {
+    init(container: ServiceContainer, book: Book, author: Author, genre: Genre, language: BookLanguage, rating: Double) {
+        self.reviewService = container.reviewService
         self.book = book
         self.author = author
         self.genre = genre
@@ -39,7 +42,7 @@ class BookViewModel: ObservableObject {
     @MainActor
     func fetchReviews() async {
         do {
-            reviews = try await DatabaseService.shared.getReviewsByBookId(bookId: book.id)
+            reviews = try await reviewService.getReviewsByBookId(bookId: book.id)
             sortReviews()
         } catch {
             print(error.localizedDescription)
@@ -49,7 +52,7 @@ class BookViewModel: ObservableObject {
     @MainActor
     func postReview(review: Review) async {
         do {
-            let result = try await DatabaseService.shared.setReview(review: review)
+            let result = try await reviewService.setReview(review: review)
             if let index = reviews.firstIndex(where: { $0.id == result.id }) {
                 reviews[index] = result
             } else {
@@ -63,7 +66,7 @@ class BookViewModel: ObservableObject {
     @MainActor
     func deleteReview(reviewId: String) async {
         do {
-            try await DatabaseService.shared.deleteReview(reviewId: reviewId)
+            try await reviewService.deleteReview(reviewId: reviewId)
             reviews.removeAll { $0.id == reviewId }
         } catch {
             print(error.localizedDescription)

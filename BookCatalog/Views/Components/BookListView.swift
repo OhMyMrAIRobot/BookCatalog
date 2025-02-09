@@ -13,7 +13,7 @@ struct BookListView: View{
     var genres: [String: Genre]
     var ratings: [String: Double]
     
-    @EnvironmentObject var favouriteViewModel : FavouriteViewModel
+    @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     
     var body: some View {
         ScrollView {

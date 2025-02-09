@@ -27,6 +27,7 @@ struct BookCatalogApp: App {
                 AccessControlView()
                     .environmentObject(authService)
                     .preferredColorScheme(.light)
+                    
             }
         }
     }

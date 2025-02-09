@@ -8,13 +8,19 @@
 import Foundation
 
 class RatingViewModel: ObservableObject {
+    private let reviewService: ReviewService
+    
+    init(container: ServiceContainer) {
+        self.reviewService = container.reviewService
+    }
+    
     @Published var bookRatings : [String: Double] = [:]
     
     @MainActor
     func fetchBookRatings(books: [Book]) async {
         for book in books {
             do {
-                let reviews = try await DatabaseService.shared.getReviewsByBookId(bookId: book.id)
+                let reviews = try await reviewService.getReviewsByBookId(bookId: book.id)
                 
                 let sum = reviews.reduce(0) { $0 + $1.rating }
                 bookRatings[book.id] = reviews.isEmpty ? 0.0 : Double(sum) / Double(reviews.count)

@@ -10,7 +10,7 @@ import SwiftUI
 struct ReviewView: View {
     let review: Review
     let profile: Profile
-    let userId: String?
+    let userId = AuthService.shared.getUserId()
     
     @EnvironmentObject var bookViewModel: BookViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel

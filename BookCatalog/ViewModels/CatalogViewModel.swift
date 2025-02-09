@@ -8,6 +8,12 @@
 import Foundation
 
 class CatalogViewModel : ObservableObject {
+    private var catalogService: CatalogService
+    
+    init(container: ServiceContainer) {
+        self.catalogService = container.catalogService
+    }
+    
     @Published var books : [Book] = []
     @Published var authors : [String : Author] = [:]
     @Published var genres : [String: Genre] = [:]
@@ -36,7 +42,7 @@ class CatalogViewModel : ObservableObject {
     @MainActor
     func fetchBooks() async {
         do {
-            let books = try await DatabaseService.shared.getBooks()
+            let books = try await catalogService.getBooks()
             self.books = books
         } catch {
             print("Failed to fetch books: \(error.localizedDescription)")
@@ -47,7 +53,7 @@ class CatalogViewModel : ObservableObject {
     func fetchAuthors() async {
         for book in books {
             do {
-                let author = try await DatabaseService.shared.getAuthorById(authorId: book.authorId)
+                let author = try await catalogService.getAuthorById(authorId: book.authorId)
                 authors[author.id] = author
             } catch {
                 print("Failed to fetch author: \(error.localizedDescription)")
@@ -58,7 +64,7 @@ class CatalogViewModel : ObservableObject {
     @MainActor
     func fetchGenres() async {
         do {
-            let genres = try await DatabaseService.shared.getGenres()
+            let genres = try await catalogService.getGenres()
             self.genres = genres
         } catch {
             print("Failed to fetch genres: \(error.localizedDescription)")
@@ -68,7 +74,7 @@ class CatalogViewModel : ObservableObject {
     @MainActor
     func fetchLanguages() async {
         do {
-            let languages = try await DatabaseService.shared.getBookLanguages()
+            let languages = try await catalogService.getBookLanguages()
             self.languages = languages
         } catch {
             print("Failed to fetch languages: \(error.localizedDescription)")

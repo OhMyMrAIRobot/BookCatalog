@@ -8,12 +8,18 @@
 import Foundation
 
 class FavouriteViewModel : ObservableObject {
+    private let profileService: ProfileService
+    
     @Published var favouriteBookIds : [String] = []
+    
+    init(container: ServiceContainer) {
+        self.profileService = container.profileService
+    }
     
     @MainActor
     func toggleFavouriteBook(bookId: String) async {
         do {
-            let isSuccess = try await DatabaseService.shared.toggleFavouriteBook(bookId: bookId)
+            let isSuccess = try await profileService.toggleFavouriteBook(bookId: bookId)
             
             if isSuccess {
                 if favouriteBookIds.contains(bookId) {
@@ -30,7 +36,7 @@ class FavouriteViewModel : ObservableObject {
     @MainActor
     func fetchFavouriteBookIds() async {
         do {
-            let favouriteBookIds = try await DatabaseService.shared.getFavouriteBookIds()
+            let favouriteBookIds = try await profileService.getFavouriteBookIds()
             self.favouriteBookIds = favouriteBookIds
         } catch {
             print("Failed to fetch favourite book ids: \(error.localizedDescription)")

@@ -16,6 +16,7 @@ struct BookCardView : View {
     @EnvironmentObject var catalogViewModel: CatalogViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel
     @EnvironmentObject var profileViewModel: ProfileViewModel
+    @EnvironmentObject var serviceContainer: ServiceContainer
     
     var body : some View {
         NavigationLink(destination: destinationView) {
@@ -124,6 +125,7 @@ struct BookCardView : View {
            let rating = ratingViewModel.bookRatings[book.id] {
             return AnyView(
                 BookView(bookViewModel: BookViewModel(
+                    container: serviceContainer,
                     book: book,
                     author: author,
                     genre: genre,
@@ -139,7 +141,4 @@ struct BookCardView : View {
     }
 }
 
-#Preview {
-  //  BookCardView(book: Book(), author: Author(), genre: Genre(), )
-}
 

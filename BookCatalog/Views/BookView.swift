@@ -126,11 +126,11 @@ struct BookView: View {
 
             VStack(spacing: 20) {
                 ForEach(bookViewModel.reviews.filter { selectedRating == nil || $0.rating == selectedRating }) { review in
-                    ReviewView(review: review,
-                               profile: profileViewModel.reviewProfiles[review.userId] ?? Profile(id: "", email: "", age: 0),
-                               userId: profileViewModel.userId
-                    )
-                    .environmentObject(bookViewModel)
+                    if let profile = profileViewModel.reviewProfiles[review.userId] {
+                        ReviewView(review: review, profile: profile)
+                            .environmentObject(bookViewModel)
+                    }
+
                 }
             }
 
