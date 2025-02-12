@@ -18,38 +18,27 @@ struct MainView: View {
     @State var isLoading = true
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
+            SearchBarView(searchText: $catalogViewModel.searchText)
+                .frame(maxHeight: 60)
+            
             if !isLoading {
-                Text("Book list")
-                    .font(.system(size: 32))
-                    .fontDesign(.rounded)
-                    .fontWeight(.semibold)
-                    .padding(.bottom, 20)
-                    .padding(.leading, 15)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                SearchBarView(searchText: $catalogViewModel.searchText)
-                
                 BookListView(
-                    books: catalogViewModel.filteredBooks.isEmpty ? catalogViewModel.books : catalogViewModel.filteredBooks,
+                    books: catalogViewModel.isFilterActive() || !catalogViewModel.searchText.isEmpty ? catalogViewModel.filteredBooks : catalogViewModel.books,
                     authors: catalogViewModel.authors,
                     genres: catalogViewModel.genres,
-                    ratings: ratingViewModel.bookRatings
+                    ratings: ratingViewModel.bookRatings,
+                    languages: catalogViewModel.languages
                 )
-                .padding(.top, 20)
-                    
-                
+                .padding(.top, 15)
+                .background(.white.opacity(0.9))
             } else {
-                ProgressView("Loading books...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                CustomProgressView(text: "Loading books...")
             }
         }
-        .background(Color(.systemGray6))
         .onAppear {
             Task {
                 if !isDataLoaded {
-                    print("fetch")
                     await catalogViewModel.fetchData()
                     await ratingViewModel.fetchBookRatings(books: catalogViewModel.books)
                     await favouriteViewModel.fetchFavouriteBookIds()
@@ -67,9 +56,4 @@ struct MainView: View {
         }
     }
 }
-
-
-//#Preview {
-//    MainView()
-//}
 

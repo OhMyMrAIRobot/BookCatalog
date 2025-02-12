@@ -10,15 +10,23 @@ import Foundation
 class BookViewModel: ObservableObject {
     private let reviewService: ReviewService
     
+    @Published var userId: String
     @Published var book: Book
     @Published var author: Author
     @Published var genre: Genre
     @Published var language: BookLanguage
     @Published var reviews: [Review] = []
     @Published var rating: Double
+    @Published var firstReviewId: String? = nil
     @Published var selectedSortOption: ReviewSortOption = .dateDescending {
         didSet {
             sortReviews()
+        }
+    }
+    
+    @Published var selectedRating: Int? = nil {
+        didSet {
+            updateFirstReview()
         }
     }
     
@@ -37,6 +45,7 @@ class BookViewModel: ObservableObject {
         self.genre = genre
         self.language = language
         self.rating = rating
+        self.userId = AuthService.shared.getUserId() ?? ""
     }
     
     @MainActor
@@ -50,7 +59,7 @@ class BookViewModel: ObservableObject {
     }
     
     @MainActor
-    func postReview(review: Review) async {
+    func postReview(review: Review) async -> Review? {
         do {
             let result = try await reviewService.setReview(review: review)
             if let index = reviews.firstIndex(where: { $0.id == result.id }) {
@@ -58,8 +67,11 @@ class BookViewModel: ObservableObject {
             } else {
                 reviews.append(result)
             }
+            
+            return result
         } catch {
             print(error.localizedDescription)
+            return nil
         }
     }
     
@@ -73,6 +85,7 @@ class BookViewModel: ObservableObject {
         }
     }
     
+
     func sortReviews() {
         switch selectedSortOption {
         case .dateDescending:
@@ -83,6 +96,22 @@ class BookViewModel: ObservableObject {
             reviews.sort { $0.rating > $1.rating }
         case .ratingAscending:
             reviews.sort { $0.rating < $1.rating }
+        }
+        
+        updateFirstReview()
+    }
+    
+    
+    func updateFirstReview() {
+        if selectedRating == nil, let userReviewId = reviews.firstIndex(where: {$0.userId == userId}) {
+            let userReview = reviews.remove(at: userReviewId)
+            reviews.insert(userReview, at: 0)
+            firstReviewId = reviews.first?.id
+            return
+        }
+        
+        if let firstId = reviews.firstIndex(where: {$0.rating == selectedRating}) {
+            firstReviewId = reviews[firstId].id
         }
     }
 }

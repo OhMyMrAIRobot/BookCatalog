@@ -31,6 +31,7 @@ struct ReviewView: View {
                     .font(.system(size: 16))
                     .fontWeight(.semibold)
                     .lineLimit(1)
+                    .foregroundStyle(.black)
                     
                     Text(review.date.dateValue().formatted(date: .numeric, time: .omitted))
                         .font(.system(size: 12))
@@ -42,7 +43,7 @@ struct ReviewView: View {
                     ForEach(0..<5) { index in
                         Image(systemName: index < review.rating ? "star.fill" : "star")
                             .bold()
-                            .foregroundColor(index < review.rating ? .yellow : .gray)
+                            .foregroundStyle(index < review.rating ? .yellow : .gray)
                     }
                 }
                 
@@ -65,8 +66,8 @@ struct ReviewView: View {
             Divider()
         }
         .padding()
-        .background(Color(.systemGray5))
-        .cornerRadius(15)
-        .shadow(radius: 3)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .shadow(color: .purple, radius: 2, x: 0, y: 2)
     }
 }

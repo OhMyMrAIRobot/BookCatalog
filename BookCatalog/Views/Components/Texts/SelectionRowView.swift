@@ -1,5 +1,5 @@
 //
-//  ProfileSelectionRowView.swift
+//  SelectionRowView.swift
 //  BookCatalog
 //
 //  Created by Daniil on 9.02.25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileSelectionRowView: View {
+struct SelectionRowView: View {
     let title: String
     let selectedItems: Set<String>
     let onTap: () -> Void
@@ -18,6 +18,7 @@ struct ProfileSelectionRowView: View {
             Text(title)
                 .font(.headline)
                 .frame(width: 100, alignment: .leading)
+                .foregroundStyle(Color.gradientColor)
             
             Text(selectedItems.isEmpty ? "None selected" : selectedItems.map(displayNames).joined(separator: ", "))
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -26,13 +27,13 @@ struct ProfileSelectionRowView: View {
 
             Button(action: onTap) {
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.black)
+                    .foregroundStyle(Color.gradientColor)
             }
         }
         .padding()
         .background(Color.white)
-        .cornerRadius(10)
-        .shadow(radius: 1)
-
+        .clipped()
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: .purple, radius: 2, x: 0, y: 2)
     }
 }

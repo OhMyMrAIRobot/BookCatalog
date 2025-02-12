@@ -83,10 +83,18 @@ class CatalogViewModel : ObservableObject {
 
     @MainActor
     func fetchData() async {
-        await fetchBooks()
-        await fetchAuthors()
-        await fetchGenres()
-        await fetchLanguages()
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await self.fetchBooks()
+                await self.fetchAuthors()
+            }
+            group.addTask {
+                await self.fetchGenres()
+            }
+            group.addTask {
+                await self.fetchLanguages()
+            }
+        }
     }
     
     func filterBooks(bookRatings: [String: Double]) {
@@ -114,5 +122,16 @@ class CatalogViewModel : ObservableObject {
         case .ageAscending:
             filteredBooks.sort { $0.ageRestriction < $1.ageRestriction }
         }
+    }
+    
+    
+    func isFilterActive() -> Bool {
+        return !(selectedGenres.isEmpty &&
+        selectedLanguages.isEmpty &&
+        selectedSortOption == .ratingDescending &&
+        minYearFilter == 1900 &&
+        maxYearFilter == Calendar.current.component(.year, from: Date()) &&
+        minAgeFilter == 0 &&
+        maxAgeFilter == 18)
     }
 }

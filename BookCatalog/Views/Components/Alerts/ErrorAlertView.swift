@@ -27,16 +27,3 @@ struct ErrorAlert : View {
         }
     }
 }
-
-struct ErrorAlert_Previews: PreviewProvider {
-    @State static var showAlert = true
-
-    static var previews: some View {
-        ErrorAlert(
-            showAlert: $showAlert,
-            title: "Warning!",
-            message: "Something went wrong!",
-            dismissButtonText: "Close"
-        )
-    }
-}

@@ -14,23 +14,23 @@ struct FavouriteView : View {
     @EnvironmentObject var catalogViewModel: CatalogViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel
     
-    var body : some View {
-        VStack {
+    var body: some View {
+        VStack(spacing: 20) {
             Text("Favourite books")
-                .font(.system(size: 32))
-                .fontDesign(.rounded)
+                .font(.system(size: 36))
                 .fontWeight(.semibold)
-                .padding(.bottom, 20)
-                .padding(.leading, 15)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundStyle(.white)
+                .frame(maxHeight: 60)
             
-            BookListView(
-                books: catalogViewModel.books.filter { favouriteViewModel.favouriteBookIds.contains($0.id) },
-                authors: catalogViewModel.authors,
-                genres: catalogViewModel.genres,
-                ratings: ratingViewModel.bookRatings
-            )
-            .background(Color(.systemGray6))
+                BookListView(
+                    books: catalogViewModel.books.filter { favouriteViewModel.favouriteBookIds.contains($0.id) },
+                    authors: catalogViewModel.authors,
+                    genres: catalogViewModel.genres,
+                    ratings: ratingViewModel.bookRatings,
+                    languages: catalogViewModel.languages
+                )
+                .padding(.top, 15)
+                .background(.white.opacity(0.9))
         }
         .refreshable {
             await favouriteViewModel.fetchFavouriteBookIds()

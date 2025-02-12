@@ -1,5 +1,5 @@
 //
-//  RegisterViewModel.swift
+//  AuthViewModel.swift
 //  BookCatalog
 //
 //  Created by Daniil on 9.02.25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class RegisterViewModel: ObservableObject {
+class AuthViewModel: ObservableObject {
     private let profileService: ProfileService
     
     

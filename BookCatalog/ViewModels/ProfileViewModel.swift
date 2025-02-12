@@ -9,9 +9,11 @@ import Foundation
 
 class ProfileViewModel: ObservableObject {
     private let profileService: ProfileService
+    private let reviewService: ReviewService
     
     init(container: ServiceContainer) {
         self.profileService = container.profileService
+        self.reviewService = container.reviewService
     }
     
     enum Gender: String, CaseIterable {
@@ -24,25 +26,19 @@ class ProfileViewModel: ObservableObject {
     
     @Published var selectedAuthors: Set<String> = [] {
         didSet {
-            Task {
-                await updateProfileField(field: "authors", value: selectedAuthors)
-            }
+            Task { await updateProfileField(field: "authors", value: selectedAuthors) }
         }
     }
 
     @Published var selectedGenres: Set<String> = [] {
         didSet {
-            Task {
-                await updateProfileField(field: "genres", value: selectedGenres)
-            }
+            Task { await updateProfileField(field: "genres", value: selectedGenres) }
         }
     }
     
     @Published var selectedGender: Gender? {
         didSet {
-            Task {
-                await updateProfileField(field: "gender", value: selectedGender?.rawValue ?? "")
-            }
+            Task { await updateProfileField(field: "gender", value: selectedGender?.rawValue ?? "") }
         }
     }
 
@@ -82,7 +78,6 @@ class ProfileViewModel: ObservableObject {
         }
         
         let savedProfile = profile
-        print("saved: \(savedProfile)")
         
         switch field {
         case "name":
@@ -107,7 +102,6 @@ class ProfileViewModel: ObservableObject {
             }
         case "gender":
             if let gender = value as? String {
-                print(gender)
                 profile.gender = gender
             }
         case "authors":
@@ -129,6 +123,17 @@ class ProfileViewModel: ObservableObject {
         } catch {
             print(error.localizedDescription)
             self.profile = savedProfile
+        }
+    }
+    
+    @MainActor
+    func deleteProfile() async {
+        do {
+            try await profileService.deleteProfile()
+            try await reviewService.deleteUserReviews()
+            try await AuthService.shared.deleteUser()
+        } catch {
+            print(error.localizedDescription)
         }
     }
 }

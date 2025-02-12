@@ -56,4 +56,24 @@ class ReviewService {
             throw error
         }
     }
+    
+    
+    func deleteUserReviews() async throws {
+        guard let userId = AuthService.shared.getUserId() else {
+            throw NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "No user id found"])
+        }
+        
+        do {
+            let querySnapshot = try await reviewsRef
+                .whereField("userId", isEqualTo: userId)
+                .getDocuments()
+            
+            for document in querySnapshot.documents {
+                try await reviewsRef.document(document.documentID).delete()
+            }
+            
+        } catch {
+            throw error
+        }
+    }
 }

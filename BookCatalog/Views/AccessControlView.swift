@@ -52,17 +52,17 @@ struct AccessControlView: View {
                     .environmentObject(catalogViewModel)
                     .environmentObject(ratingViewModel)
                     .environmentObject(profileViewModel)
+                    .environmentObject(services)
                     
                     NavigationBar(selectedTab: $selectedTab)
-                        .background(Color(.systemGray6))
-                    
+                        .background(.white)
+
                 } else {
-                    AuthView()
+                    AuthView(serviceContainer: services)
                 }
             }
-            .environmentObject(services)
-            .background(Color(.systemGray6))
-            .edgesIgnoringSafeArea(.bottom)
+            .background(Color.gradientColor)
+            .edgesIgnoringSafeArea(.vertical)
             .onChange(of: authService.isLoggedIn) { newValue, oldValue in
                 selectedTab = 0
             }

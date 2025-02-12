@@ -3,155 +3,123 @@
 //  BookCatalog
 //
 //  Created by Daniil on 31.01.25.
+//
 
 import SwiftUI
 import FirebaseAuth
 
 struct BookView: View {
     @StateObject var bookViewModel: BookViewModel
-    
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
     @EnvironmentObject var ratingViewModel: RatingViewModel
     @EnvironmentObject var profileViewModel: ProfileViewModel
-    
-    @State private var selectedRating: Int? = nil
 
     var body: some View {
-        ScrollView() {
-            AsyncImage(url: URL(string: bookViewModel.book.images.isEmpty ?
-                                "https://static-00.iconduck.com/assets.00/no-image-icon-512x512-lfoanl0w.png"
-                                :  bookViewModel.book.images[0])) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                case .success(let image):
-                    image
-                        .resizable()
-                case .failure:
-                    Text("Failed to load image")
-                @unknown default:
-                    EmptyView()
-                }
-            }
-            .frame(maxWidth: 200, maxHeight: 300)
-            .clipped()
-            .cornerRadius(10)
-            
-            
-            Text(bookViewModel.book.title)
-                .frame(maxWidth: 350)
-                .multilineTextAlignment(.center)
-                .lineLimit(3)
-                .font(.title)
-                .fontWeight(.bold)
-                .padding(.top, 15)
-         
-            Text("\(bookViewModel.author.name) \(bookViewModel.author.surname)")
-                .font(.system(size: 22))
-                .fontWeight(.semibold)
-                .foregroundColor(.secondary)
-                .padding(.top, 5)
-            
-            Divider()
-            
-            HStack(alignment: .center) {
-                HStack(spacing: 1.5) {
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.yellow)
-                        .font(.system(size: 24))
-                        .bold()
-                    
-                    Text(String(format: "%.1f", ratingViewModel.bookRatings[bookViewModel.book.id] ?? 0.0))
-                        .font(.system(size: 24))
-                        .bold()
-                }.padding(.horizontal, 7)
-                
-                // TODO: добавить язык книги
-                
-                HStack(spacing: 1.5) {
-                    Image(systemName: "exclamationmark.shield.fill")
-                        .foregroundColor(getAgeColor(age: bookViewModel.book.ageRestriction))
-                        .font(.system(size: 24))
-                        .bold()
-                    
-                    Text("\(bookViewModel.book.ageRestriction)+")
-                        .font(.system(size: 24))
-                        .bold()
-                }
-                
-                Spacer()
-                
-                Text(bookViewModel.genre.name)
-                    .font(.system(size: 20))
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 3)
-                    .background(Color.red.opacity(0.2))
-                    .foregroundColor(Color.red.opacity(0.9))
-                    .clipShape(Capsule())
-                    .padding(.horizontal, 10)
-                
-            
-                Button(action: {
-                    Task {
-                        await favouriteViewModel.toggleFavouriteBook(bookId: bookViewModel.book.id)
-                    }
-                }) {
-                    Image(systemName: favouriteViewModel.favouriteBookIds.contains(bookViewModel.book.id) ? "heart.fill" : "heart")
-                        .foregroundColor(favouriteViewModel.favouriteBookIds.contains(bookViewModel.book.id) ? .red : .gray)
-                        .font(.system(size: 30))
-                }
-            }
-            .padding(.top, 10)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-            
-            ExpandableTextView(fullText: bookViewModel.book.description, lines: 5)
-                .font(.system(size: 20))
-                .fontWeight(.semibold)
-                .foregroundColor(.secondary)
-                .padding(.top, 10)
-            
-            Divider()
-            
-            ImageCarouselView(book: bookViewModel.book)
-                .padding(.top, 10)
-            
-            Divider()
-                .padding(.top, 10)
-    
-            ReviewFiltersBarView(selectedRating: $selectedRating)
-                .environmentObject(bookViewModel)
+        ScrollViewReader { scrollProxy in
+            ScrollView {
+                VStack {
+                    BookImageView(imageUrl: !bookViewModel.book.images.isEmpty ? bookViewModel.book.images[0] : "")
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .frame(maxWidth: 200, maxHeight: 300)
+                        .clipped()
+                        .shadow(color: Color.black.opacity(0.3), radius: 10, x: -2, y: 2)
 
-            VStack(spacing: 20) {
-                ForEach(bookViewModel.reviews.filter { selectedRating == nil || $0.rating == selectedRating }) { review in
-                    if let profile = profileViewModel.reviewProfiles[review.userId] {
-                        ReviewView(review: review, profile: profile)
+                    Text("\(bookViewModel.book.title) (\(String(bookViewModel.book.publishedYear)))")
+                        .frame(maxWidth: 350)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(3)
+                        .font(.title)
+                        .bold()
+                        .padding(.top, 15)
+
+                    Text("\(bookViewModel.author.name) \(bookViewModel.author.surname)")
+                        .font(.system(size: 22))
+                        .fontWeight(.semibold)
+                        .foregroundColor(.gray)
+                        .padding(.top, 3)
+
+                    VStack(spacing: 10) {
+                        Divider()
+
+                        HStack(alignment: .center) {
+                            BookRatingView(fontSize: 24, rating: ratingViewModel.bookRatings[bookViewModel.book.id] ?? 0.0)
+
+                            TagButtonView(title: bookViewModel.genre.name, fontSize: 20) {}
+                            TagButtonView(title: bookViewModel.language.name, fontSize: 20) {}
+                            AgeRestictionCircleView(age: bookViewModel.book.ageRestriction, radius: 32, fontSize: 17).bold()
+
+                            Spacer()
+
+                            FavouriteToggleButtonView(isFavourite: favouriteViewModel.favouriteBookIds.contains(bookViewModel.book.id)) {
+                                Task { await favouriteViewModel.toggleFavouriteBook(bookId: bookViewModel.book.id) }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                        ExpandableTextView(fullText: bookViewModel.book.description, lines: 5)
+                            .font(.system(size: 20))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.secondary)
+
+                        Divider()
+
+                        ImageCarouselView(book: bookViewModel.book)
+
+                        Divider()
+
+                        ReviewFiltersBarView(selectedRating: $bookViewModel.selectedRating)
                             .environmentObject(bookViewModel)
+                            .padding()
+                            .background(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                            .shadow(color: .purple, radius: 2, x: 0, y: 2)
+                            .onChange(of: bookViewModel.selectedRating) {
+                                scrollToFirstReview(scrollProxy)
+                            }
+                            .onChange(of: ratingViewModel.bookRatings[bookViewModel.book.id]) {
+                                scrollToFirstReview(scrollProxy)
+                            }
+
+                        VStack(spacing: 20) {
+                            ForEach(bookViewModel.reviews.filter { bookViewModel.selectedRating == nil || $0.rating == bookViewModel.selectedRating }) { review in
+                                if let profile = profileViewModel.reviewProfiles[review.userId] {
+                                    ReviewView(review: review, profile: profile)
+                                        .environmentObject(bookViewModel)
+                                        .id(review.id)
+                                } else {
+                                    Text("error ")
+                                }
+                            }
+                        }
+                        .padding(.top, 10)
                     }
-
                 }
+                .padding(.horizontal)
+                .padding(.bottom, 50)
+                .padding(.top, 70)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .background(.white.opacity(0.9))
             }
-
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding()
-        .background(Color(.systemGray6))
-        .scrollIndicators(.hidden)
-        .onAppear {
-            Task {
-                await bookViewModel.fetchReviews()
-                await profileViewModel.fetchReviewProfiles(reviews: bookViewModel.reviews)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .scrollIndicators(.hidden)
+            .edgesIgnoringSafeArea(.vertical)
+            .background(Color.gradientColor)
+            .navigationBarBackButtonHidden(true)
+            .navigationBarItems(leading: BackButtonView())
+            .onAppear {
+                Task {
+                    await bookViewModel.fetchReviews()
+                    await profileViewModel.fetchReviewProfiles(reviews: bookViewModel.reviews)
+                }
             }
         }
     }
-    
-    func getAgeColor(age: Int) -> Color {
-        switch age {
-        case ...6: return .green
-        case 7...17: return .orange
-        default: return .red
+
+    private func scrollToFirstReview(_ proxy: ScrollViewProxy) {
+        if let firstReviewId = bookViewModel.firstReviewId {
+            withAnimation {
+                proxy.scrollTo(firstReviewId, anchor: .top)
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  ProfileRow.swift
+//  EditRowView.swift
 //  BookCatalog
 //
 //  Created by Daniil on 9.02.25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileRowView: View {
+struct EditRowView: View {
     let title: String
     let field: String
     
@@ -27,6 +27,7 @@ struct ProfileRowView: View {
             Text(title)
                 .font(.headline)
                 .frame(width: 100, alignment: .leading)
+                .foregroundStyle(Color.gradientColor)
             
             if isEditing {
                 TextField("Enter \(title.lowercased())", text: $value, onCommit: {
@@ -50,12 +51,12 @@ struct ProfileRowView: View {
                 isEditing.toggle()
             }}) {
                 Image(systemName: isEditing ? "checkmark.circle.fill" : "pencil")
-                    .foregroundColor(isEditing ? .green : .black)
+                    .foregroundStyle(isEditing ? .black : .purple)
             }
         }
         .padding()
         .background(Color.white)
         .cornerRadius(10)
-        .shadow(radius: 1)
+        .shadow(color: .purple, radius: 2, x: 0, y: 2)
     }
 }

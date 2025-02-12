@@ -12,51 +12,41 @@ struct NavigationBar : View {
     
     var body: some View {
         HStack {
-            
-            // Books Tab
             NavigationTabItem(
-                icon: "book.fill",
+                icon: "book",
                 label: "Books",
                 isSelected: selectedTab == 0
             ) {
                 selectedTab = 0
             }
-
-            Spacer()
-            
-            // Favourite Tab
+            .frame(maxWidth: .infinity)
+    
             NavigationTabItem(
-                icon: "star.fill",
+                icon: "star",
                 label: "Favourite",
                 isSelected: selectedTab == 1
-
             ) {
                 selectedTab = 1
             }
-
-            Spacer()
+            .frame(maxWidth: .infinity)
             
-            // Profile Tab
             NavigationTabItem(
-                icon: "person.fill",
+                icon: "person",
                 label: "Profile",
                 isSelected: selectedTab == 2
             ) {
                 selectedTab = 2
             }
+            .frame(maxWidth: .infinity)
         }
-        .padding(.horizontal, 30)
+        .padding(.horizontal, 10)
         .padding(.top, 8)
         .padding(.bottom, 24)
-        .background(
-            Color(.systemGray6)
-                .overlay(
-                    Rectangle()
-                        .fill(Color.black).opacity(0.8)
-                        .frame(height: 1), alignment: .top
-                )
+        .overlay(
+            Rectangle()
+                .fill(Color.gray).opacity(0.6)
+                .frame(height: 2), alignment: .top
         )
-        
     }
 }
 
@@ -70,12 +60,12 @@ struct NavigationTabItem: View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(isSelected ? .black : .gray)
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundStyle(isSelected ? .purple : .gray)
                 
                 Text(label)
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(isSelected ? .black : .gray)
+                    .foregroundStyle(isSelected ? .purple : .gray)
             }
         }
     }

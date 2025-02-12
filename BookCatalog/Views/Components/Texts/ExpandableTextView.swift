@@ -24,7 +24,7 @@ struct ExpandableTextView: View {
                     isExpanded.toggle()
                 }
                 .font(.headline)
-                .foregroundColor(Color(.red).opacity(0.8))
+                .foregroundStyle(Color.gradientColor)
 //            }
         }
     }

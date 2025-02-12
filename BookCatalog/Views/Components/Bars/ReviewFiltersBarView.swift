@@ -15,105 +15,83 @@ struct ReviewFiltersBarView: View {
     @State private var isAddSheetActive = false
     @State private var isFilterSheetActive = false
     @State private var isProfileLoading = true
-    private let userId = AuthService.shared.getUserId() ?? ""
     
     var body: some View {
-        HStack(alignment: .center) {
-            Button(action: {
-                isFilterSheetActive.toggle()
-            }) {
-                Image(systemName: "slider.horizontal.3")
-            }
-            .font(.system(size: 12))
-            .fontWeight(.semibold)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(.white)
-            .foregroundColor(.black)
-            .clipShape(Capsule())
-
-            Spacer()
-            
-            Button(action: {
-                isAddSheetActive.toggle()
-            }) {
-                Text("+ Review")
-            }
-            .font(.system(size: 12))
-            .fontWeight(.semibold)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(.black)
-            .foregroundColor(.white)
-            .clipShape(Capsule())
-        }
-        .padding(.top, 10)
-        .sheet(isPresented: $isAddSheetActive) {
-            if !isProfileLoading {
-                if let profile = profileViewModel.profile {
-                    NewReviewSheetView(
-                        isPresented: $isAddSheetActive,
-                        sheetTitle: "Post new review",
-                        bookTitle: bookViewModel.book.title,
-                        name: profile.name.isEmpty && profile.surname.isEmpty ? "Unknown user" : "\(profile.name) \(profile.surname)",
-                        review: bookViewModel.reviews.first(where: { $0.userId == userId })
-                    )
-                    .presentationDetents([.large, .fraction(0.8)])
-                    .presentationDragIndicator(.visible)
-                    //                .environmentObject(bookViewModel)
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .center) {
+                Button(action: { isFilterSheetActive.toggle() }) {
+                    Image(systemName: "slider.horizontal.3")
                 }
-            } else {
-                ProgressView("Loading profile...")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .onAppear {
-                        Task {
-                            await profileViewModel.fetchProfile()
-                            isProfileLoading = false
-                        }
+                .font(.system(size: 12))
+                .fontWeight(.semibold)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.white)
+                .foregroundStyle(Color.gradientColor)
+                .clipShape(RoundedRectangle(cornerRadius: 30))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 30)
+                        .stroke(Color.gradientColor, lineWidth: 2)
+                )
+                
+                Spacer()
+                
+                Button(action: { isAddSheetActive.toggle()}) {
+                    Text("\(bookViewModel.reviews.contains(where: {$0.userId == bookViewModel.userId}) ? "Edit my" : "Post new") review")
+                }
+                .font(.system(size: 12))
+                .fontWeight(.semibold)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.gradientColor)
+                .foregroundStyle(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 30))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 30)
+                        .stroke(Color.gradientColor, lineWidth: 2)
+                )
+                
+            }
+            .sheet(isPresented: $isAddSheetActive) {
+                if !isProfileLoading {
+                    if let profile = profileViewModel.profile {
+                        NewReviewSheetView(
+                            isPresented: $isAddSheetActive,
+                            sheetTitle: "\(bookViewModel.reviews.contains(where: {$0.userId == bookViewModel.userId}) ? "Edit my" : "Post new") review",
+                            bookTitle: bookViewModel.book.title,
+                            name: profile.name.isEmpty && profile.surname.isEmpty ? "Unknown user" : "\(profile.name) \(profile.surname)",
+                            review: bookViewModel.reviews.first(where: { $0.userId == bookViewModel.userId })
+                        )
+                        .presentationDetents([.fraction(0.6)])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackground(Color.gradientColor)
                     }
+                } else {
+                    ProgressView("Loading profile...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .onAppear {
+                            Task {
+                                await profileViewModel.fetchProfile()
+                                isProfileLoading = false
+                            }
+                        }
+                }
             }
-        }
-        .sheet(isPresented: $isFilterSheetActive) {
-            ReviewFilterSheetView(isPresented: $isFilterSheetActive)
-                .presentationDetents([.large, .fraction(0.5)])
-                .presentationDragIndicator(.visible)
-        }
-        
-        HStack(spacing: 3) {
-            FilterButton(title: "All", rating: nil, selectedRating: $selectedRating)
+            .sheet(isPresented: $isFilterSheetActive) {
+                ReviewFilterSheetView(isPresented: $isFilterSheetActive)
+                    .presentationDetents([.fraction(0.4)])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(Color.gradientColor)
+            }
             
-            ForEach(1..<6) { idx in
-                FilterButton(title: "\(idx)", rating: idx, selectedRating: $selectedRating)
+            HStack(spacing: 10) {
+                FilterButtonView(title: "All", rating: nil, selectedRating: $selectedRating)
+                
+                ForEach(1..<6) { idx in
+                    FilterButtonView(title: "\(idx)", rating: idx, selectedRating: $selectedRating)
+                }
             }
         }
-    }
-}
-
-
-struct FilterButton: View {
-    let title: String
-    let rating: Int?
-    @Binding var selectedRating: Int?
-
-    var body: some View {
-        Button(action: {
-            selectedRating = rating
-        }) {
-            HStack(alignment: .center, spacing: 5) {
-                Image(systemName: "star.fill")
-                    .foregroundColor(selectedRating == rating ? .white : .black)
-                Text(title)
-                    .foregroundColor(selectedRating == rating ? .white : .black)
-            }
-            .frame(maxWidth: 80, maxHeight: 20)
-            .font(.system(size: 12))
-            .fontWeight(.semibold)
-            .padding(.horizontal, 2)
-            .padding(.vertical, 2)
-            .background(selectedRating == rating ? .black : Color(.systemGray5))
-            .clipShape(Capsule())
-        }
-        .padding(4)
     }
 }
 
