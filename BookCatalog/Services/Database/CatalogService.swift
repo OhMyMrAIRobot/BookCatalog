@@ -26,7 +26,9 @@ class CatalogService {
         let books: [Book] = snapshot.documents.compactMap { document in
             return try? document.data(as: Book.self)
         }
-        
+        books.forEach { book in
+            print(book.title)
+        }
         return books
     }
     
@@ -69,7 +71,7 @@ class CatalogService {
         else {
             throw NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Author not found"])
         }
-        
+        print(author.name)
         return author
     }
     

@@ -17,7 +17,7 @@ struct AuthView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack {
-                Image("test")
+                Image("Preview")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 250, height: 250)

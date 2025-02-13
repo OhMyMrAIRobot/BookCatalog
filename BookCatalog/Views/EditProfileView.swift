@@ -10,10 +10,7 @@ import SwiftUI
 struct EditProfileView: View {
     @EnvironmentObject var profileViewModel: ProfileViewModel
     @EnvironmentObject var catalogViewModel: CatalogViewModel
-    
-    @State private var isEditing = false
-    
-    @State private var selectedAge: Int = 18
+
     
     var body: some View {
         VStack {

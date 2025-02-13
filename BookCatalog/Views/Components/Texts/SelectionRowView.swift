@@ -35,5 +35,6 @@ struct SelectionRowView: View {
         .clipped()
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .shadow(color: .purple, radius: 2, x: 0, y: 2)
+        .buttonStyle(PlainButtonStyle())
     }
 }

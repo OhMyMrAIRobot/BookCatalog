@@ -23,12 +23,9 @@ struct BookCatalogApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                AccessControlView()
-                    .environmentObject(authService)
-                    .preferredColorScheme(.light)
-                    
-            }
+            AccessControlView()
+                .environmentObject(authService)
+                .preferredColorScheme(.light)
         }
     }
 }

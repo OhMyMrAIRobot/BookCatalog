@@ -24,32 +24,36 @@ struct BookCardView : View {
             HStack(alignment: .top) {
                 BookImageView(imageUrl: !book.images.isEmpty ? book.images[0] : "")
                     .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .frame(maxWidth: 90)
+                    .frame(maxWidth: 90, maxHeight: .infinity)
+                    .frame(height: 130)
                     .clipped()
                     .shadow(color: Color.black.opacity(0.3), radius: 10, x: -2, y: 2)
 
                 VStack(alignment: .leading, spacing: 14) {
-                    Text(book.title)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .lineLimit(2)
-                        .font(.title2)
-                        .bold()
-                        .foregroundStyle(Color.black)
+                    VStack(spacing: 14) {
+                        Text(book.title)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .lineLimit(2)
+                            .font(.title2)
+                            .bold()
+                            .foregroundStyle(Color.black)
+                        
+                        Text("\(author.name) \(author.surname)")
+                            .font(.system(size: 18))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color.gray)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }.frame(maxHeight: .infinity, alignment: .top)
                     
-                    Text("\(author.name) \(author.surname)")
-                        .font(.system(size: 18))
-                        .fontWeight(.semibold)
-                        .foregroundStyle(Color.gray)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    HStack {
+                    HStack(alignment: .bottom) {
                         TagButtonView(title: genre.name, fontSize: 15, action: {})
                         TagButtonView(title: language.name, fontSize: 15, action: {})
                     }
                 }
                 .padding(.leading, 10)
                 .frame(width: 185)
+                .frame(maxHeight: .infinity, alignment: .top)
                 
                 VStack(alignment: .trailing) {
                     BookRatingView(fontSize: 18, rating: rating)

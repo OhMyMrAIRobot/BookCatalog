@@ -23,8 +23,8 @@ class CatalogViewModel : ObservableObject {
     @Published var selectedGenres: Set<String> = []
     @Published var selectedLanguages: Set<String> = []
     @Published var selectedSortOption: SortOption = .ratingDescending
-    @Published var minYearFilter = 1900
-    @Published var maxYearFilter = Calendar.current.component(.year, from: Date())
+    @Published var minYearFilter: Int = 1500
+    @Published var maxYearFilter: Int = Calendar.current.component(.year, from: Date())
     @Published var minAgeFilter = 0
     @Published var maxAgeFilter = 18
     
@@ -87,6 +87,7 @@ class CatalogViewModel : ObservableObject {
             group.addTask {
                 await self.fetchBooks()
                 await self.fetchAuthors()
+                print("total: \(self.books.count)")
             }
             group.addTask {
                 await self.fetchGenres()
@@ -102,10 +103,10 @@ class CatalogViewModel : ObservableObject {
             let matchesGenre = selectedGenres.isEmpty || selectedGenres.contains(book.genreId)
             let matchesLanguage = selectedLanguages.isEmpty || selectedLanguages.contains(book.languageId)
             let matchesSearch = searchText.isEmpty || book.title.lowercased().contains(searchText.lowercased())
-            let matchesYear = (minYearFilter...maxYearFilter).contains(book.publishedYear)
-            let matchesAge = (minAgeFilter...maxAgeFilter).contains(book.ageRestriction)
+            let matchesYear = (book.publishedYear < maxYearFilter) && (book.publishedYear > minYearFilter)
+            let matchesAge = (book.ageRestriction < maxYearFilter) && (book.ageRestriction > minAgeFilter)
             
-            return matchesGenre && matchesLanguage && matchesSearch && matchesYear && matchesAge
+            return matchesSearch && matchesGenre && matchesLanguage && matchesYear && matchesAge
         }
         
         switch selectedSortOption {
@@ -129,7 +130,7 @@ class CatalogViewModel : ObservableObject {
         return !(selectedGenres.isEmpty &&
         selectedLanguages.isEmpty &&
         selectedSortOption == .ratingDescending &&
-        minYearFilter == 1900 &&
+        minYearFilter == 1500 &&
         maxYearFilter == Calendar.current.component(.year, from: Date()) &&
         minAgeFilter == 0 &&
         maxAgeFilter == 18)

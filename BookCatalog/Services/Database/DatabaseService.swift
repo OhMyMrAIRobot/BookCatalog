@@ -14,12 +14,11 @@ class DatabaseService {
 
     private init() {
         let settings = FirestoreSettings()
-        settings.cacheSettings = MemoryCacheSettings(garbageCollectorSettings: MemoryLRUGCSettings())
         settings.cacheSettings = PersistentCacheSettings(sizeBytes: 100 * 1024 * 1024 as NSNumber)
         
         db = Firestore.firestore()
         db.settings = settings
-
+        
         if let indexManager = db.persistentCacheIndexManager {
             indexManager.enableIndexAutoCreation()
         } else {
@@ -27,3 +26,4 @@ class DatabaseService {
         }
     }
 }
+

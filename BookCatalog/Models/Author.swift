@@ -10,6 +10,6 @@ import Foundation
 public struct Author: Identifiable, Codable {
     public var id: String
     var name: String
-    var surname: String
+    var surname: String = ""
     var thirdname: String = ""
 }

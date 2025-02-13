@@ -18,3 +18,4 @@ public struct Book: Identifiable, Codable, Hashable {
     var languageId: String
     var images: [String]
 }
+

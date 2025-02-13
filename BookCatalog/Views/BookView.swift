@@ -20,7 +20,7 @@ struct BookView: View {
                 VStack {
                     BookImageView(imageUrl: !bookViewModel.book.images.isEmpty ? bookViewModel.book.images[0] : "")
                         .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .frame(maxWidth: 200, maxHeight: 300)
+                        .frame(width: 200, height: 300)
                         .clipped()
                         .shadow(color: Color.black.opacity(0.3), radius: 10, x: -2, y: 2)
 
@@ -32,11 +32,12 @@ struct BookView: View {
                         .bold()
                         .padding(.top, 15)
 
-                    Text("\(bookViewModel.author.name) \(bookViewModel.author.surname)")
+                    Text("\(bookViewModel.author.name) \(bookViewModel.author.thirdname.isEmpty ? "" : bookViewModel.author.thirdname + " ")\(bookViewModel.author.surname)")
                         .font(.system(size: 22))
                         .fontWeight(.semibold)
                         .foregroundColor(.gray)
                         .padding(.top, 3)
+            
 
                     VStack(spacing: 10) {
                         Divider()
@@ -44,8 +45,8 @@ struct BookView: View {
                         HStack(alignment: .center) {
                             BookRatingView(fontSize: 24, rating: ratingViewModel.bookRatings[bookViewModel.book.id] ?? 0.0)
 
-                            TagButtonView(title: bookViewModel.genre.name, fontSize: 20) {}
-                            TagButtonView(title: bookViewModel.language.name, fontSize: 20) {}
+                            TagButtonView(title: bookViewModel.genre.name, fontSize: 18) {}
+                            TagButtonView(title: bookViewModel.language.name, fontSize: 18) {}
                             AgeRestictionCircleView(age: bookViewModel.book.ageRestriction, radius: 32, fontSize: 17).bold()
 
                             Spacer()

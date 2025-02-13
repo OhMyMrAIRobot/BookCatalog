@@ -24,7 +24,7 @@ struct MainView: View {
             
             if !isLoading {
                 BookListView(
-                    books: catalogViewModel.isFilterActive() || !catalogViewModel.searchText.isEmpty ? catalogViewModel.filteredBooks : catalogViewModel.books,
+                    books: (catalogViewModel.isFilterActive() || !catalogViewModel.searchText.isEmpty) ? catalogViewModel.filteredBooks : catalogViewModel.books,
                     authors: catalogViewModel.authors,
                     genres: catalogViewModel.genres,
                     ratings: ratingViewModel.bookRatings,

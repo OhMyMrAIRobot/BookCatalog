@@ -17,7 +17,6 @@ struct ProfileView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            
             VStack{}.frame(maxWidth: .infinity, maxHeight: 60)
             
             ScrollView {
@@ -145,12 +144,13 @@ struct ProfileView: View {
             .refreshable {
                 await profileViewModel.fetchProfile()
             }
+            .navigationDestination(isPresented: $navigateToEditProfile) {
+                EditProfileView()
+                    .environmentObject(profileViewModel)
+                    .environmentObject(catalogViewModel)
+            }
         }
-        .navigationDestination(isPresented: $navigateToEditProfile) {
-            EditProfileView()
-                .environmentObject(profileViewModel)
-                .environmentObject(catalogViewModel)
-        }
+
     }
 }
 

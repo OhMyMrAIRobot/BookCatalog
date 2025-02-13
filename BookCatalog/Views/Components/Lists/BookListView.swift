@@ -15,6 +15,7 @@ struct BookListView: View{
     var languages: [String: BookLanguage]
     
     @EnvironmentObject var favouriteViewModel: FavouriteViewModel
+    @EnvironmentObject var catalogViewModel: CatalogViewModel
     
     var body: some View {
         ScrollView {
@@ -25,12 +26,11 @@ struct BookListView: View{
                            let genre = genres[book.genreId],
                            let rating = ratings[book.id],
                            let language = languages[book.languageId] {
-                            
                             BookCardView(book: book, author: author, genre: genre, rating: rating, language: language)
                                 .padding(.horizontal)
                         }
                     }
-                }
+                }.padding(.top, 2)
             } else {
                 Text("Books not found :(")
             }

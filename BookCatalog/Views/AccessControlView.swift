@@ -31,12 +31,14 @@ struct AccessControlView: View {
     @State private var selectedTab = 0
     
     var body: some View {
+        NavigationStack {
             VStack(spacing: 0) {
                 if authService.isLoading {
                     ProgressView("Checking authorization...")
                         .progressViewStyle(CircularProgressViewStyle())
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if authService.isLoggedIn {
+                }
+                else if authService.isLoggedIn {
                     TabView(selection: $selectedTab) {
                         MainView()
                             .tag(0)
@@ -56,7 +58,7 @@ struct AccessControlView: View {
                     
                     NavigationBar(selectedTab: $selectedTab)
                         .background(.white)
-
+                    
                 } else {
                     AuthView(serviceContainer: services)
                 }
@@ -66,7 +68,7 @@ struct AccessControlView: View {
             .onChange(of: authService.isLoggedIn) { newValue, oldValue in
                 selectedTab = 0
             }
-        
+        }
     }
 }
 
