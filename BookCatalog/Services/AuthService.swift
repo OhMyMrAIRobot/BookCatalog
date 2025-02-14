@@ -62,8 +62,10 @@ class AuthService : ObservableObject {
     @MainActor
     func deleteUser() async throws {
         do {
+            print("curUser \(auth.currentUser!)")
             try await auth.currentUser?.delete()
             self.isLoggedIn = false
+            print("user deleted")
         } catch {
             throw error
         }

@@ -22,7 +22,7 @@ class CatalogViewModel : ObservableObject {
     
     @Published var selectedGenres: Set<String> = []
     @Published var selectedLanguages: Set<String> = []
-    @Published var selectedSortOption: SortOption = .ratingDescending
+    @Published var selectedSortOption: SortOption = .none
     @Published var minYearFilter: Int = 1500
     @Published var maxYearFilter: Int = Calendar.current.component(.year, from: Date())
     @Published var minAgeFilter = 0
@@ -31,6 +31,7 @@ class CatalogViewModel : ObservableObject {
     @Published var searchText = ""
     
     enum SortOption: String, CaseIterable {
+        case none = "None"
         case ratingDescending = "Rating (High to Low)"
         case ratingAscending = "Rating (Low to High)"
         case releaseDateDescending = "Publish year (Newest first)"
@@ -110,6 +111,7 @@ class CatalogViewModel : ObservableObject {
         }
         
         switch selectedSortOption {
+        case .none: break
         case .ratingDescending:
             filteredBooks.sort { (bookRatings[$0.id] ?? 0) > (bookRatings[$1.id] ?? 0) }
         case .ratingAscending:
@@ -125,11 +127,10 @@ class CatalogViewModel : ObservableObject {
         }
     }
     
-    
     func isFilterActive() -> Bool {
         return !(selectedGenres.isEmpty &&
         selectedLanguages.isEmpty &&
-        selectedSortOption == .ratingDescending &&
+        selectedSortOption == .none &&
         minYearFilter == 1500 &&
         maxYearFilter == Calendar.current.component(.year, from: Date()) &&
         minAgeFilter == 0 &&

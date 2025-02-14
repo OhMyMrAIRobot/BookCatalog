@@ -47,8 +47,8 @@ struct BookCardView : View {
                     }.frame(maxHeight: .infinity, alignment: .top)
                     
                     HStack(alignment: .bottom) {
-                        TagButtonView(title: genre.name, fontSize: 15, action: {})
-                        TagButtonView(title: language.name, fontSize: 15, action: {})
+                        TagButtonView(title: genre.name, fontSize: 14, action: {})
+                        TagButtonView(title: language.name, fontSize: 14, action: {})
                     }
                 }
                 .padding(.leading, 10)

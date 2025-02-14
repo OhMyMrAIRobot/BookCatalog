@@ -71,7 +71,7 @@ class ReviewService {
             for document in querySnapshot.documents {
                 try await reviewsRef.document(document.documentID).delete()
             }
-            
+            print("reviews deleted")
         } catch {
             throw error
         }

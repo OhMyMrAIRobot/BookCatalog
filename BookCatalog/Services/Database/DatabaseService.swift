@@ -14,7 +14,7 @@ class DatabaseService {
 
     private init() {
         let settings = FirestoreSettings()
-        settings.cacheSettings = PersistentCacheSettings(sizeBytes: 100 * 1024 * 1024 as NSNumber)
+        settings.cacheSettings = PersistentCacheSettings(sizeBytes: 500 * 1024 * 1024 as NSNumber)
         
         db = Firestore.firestore()
         db.settings = settings

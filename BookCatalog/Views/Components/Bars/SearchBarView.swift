@@ -21,10 +21,13 @@ struct SearchBarView : View {
                 .foregroundStyle(searchText.isEmpty ? Color.gradientGray : Color.gradientColor)
             
             TextField("Search books here...", text: $searchText)
-                .autocorrectionDisabled(true)
+                .focused($isFocused)
                 .accentColor(.purple)
                 .onChange(of: searchText) {
                     catalogViewModel.filterBooks(bookRatings: ratingViewModel.bookRatings)
+                }
+                .onDisappear {
+                    isFocused = false
                 }
             
             Button(action: {

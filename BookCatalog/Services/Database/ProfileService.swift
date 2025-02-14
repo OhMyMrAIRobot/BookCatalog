@@ -95,7 +95,9 @@ class ProfileService {
         
         do {
             try await profilesRef.document(userId).delete()
+            print("profile deleted")
         } catch {
+            print(error)
             throw error
         }
     }
