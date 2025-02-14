@@ -52,14 +52,21 @@ class CatalogViewModel : ObservableObject {
     
     @MainActor
     func fetchAuthors() async {
-        for book in books {
-            do {
-                let author = try await catalogService.getAuthorById(authorId: book.authorId)
-                authors[author.id] = author
-            } catch {
-                print("Failed to fetch author: \(error.localizedDescription)")
-            }
+//        for book in books {
+//            do {
+//                let author = try await catalogService.getAuthorById(authorId: book.authorId)
+//                authors[author.id] = author
+//            } catch {
+//                print("Failed to fetch author: \(error.localizedDescription)")
+//            }
+//        }
+        do {
+            let authors = try await catalogService.getAuthors()
+            self.authors = authors
+        } catch {
+            print("Failed to fetch authors: \(error.localizedDescription)")
         }
+
     }
     
     @MainActor
@@ -87,8 +94,9 @@ class CatalogViewModel : ObservableObject {
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
                 await self.fetchBooks()
+            }
+            group.addTask {
                 await self.fetchAuthors()
-                print("total: \(self.books.count)")
             }
             group.addTask {
                 await self.fetchGenres()

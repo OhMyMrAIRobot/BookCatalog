@@ -8,7 +8,7 @@
 import FirebaseFirestore
 
 
-struct Review: Identifiable, Codable {
+struct Review: Identifiable, Codable, Hashable {
     public var id: String = UUID().uuidString
     var userId: String = "0"
     var bookId: String

@@ -16,6 +16,29 @@ class ReviewService {
     
     private var reviewsRef: CollectionReference { return db.collection("Reviews") }
     
+    func getRatings(books: [Book]) async throws -> [String: Double] {
+        let snapshot = try await reviewsRef.getDocuments()
+        
+        var reviews: [String: Int] = [:]
+        var counts: [String: Int] = [:]
+        
+        for document in snapshot.documents {
+            if let review = try? document.data(as: Review.self) {
+                reviews[review.bookId, default: 0] += review.rating
+                counts[review.bookId, default: 0] += 1
+            }
+        }
+        
+        var result: [String: Double] = [:]
+        
+        for (bookId, totalRating) in reviews {
+            if let count = counts[bookId], count > 0 {
+                result[bookId] = Double(totalRating) / Double(count)
+            }
+        }
+        
+        return result
+    }
     
     func getReviewsByBookId(bookId: String) async throws -> [Review] {
         let snapshot = try await reviewsRef

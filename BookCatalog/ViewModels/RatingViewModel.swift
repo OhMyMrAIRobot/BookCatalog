@@ -18,16 +18,21 @@ class RatingViewModel: ObservableObject {
     
     @MainActor
     func fetchBookRatings(books: [Book]) async {
-        for book in books {
-            do {
-                let reviews = try await reviewService.getReviewsByBookId(bookId: book.id)
-                
-                let sum = reviews.reduce(0) { $0 + $1.rating }
-                bookRatings[book.id] = reviews.isEmpty ? 0.0 : Double(sum) / Double(reviews.count)
-            } catch {
-                print("Failed to fetch rating for book \(book.id): \(error.localizedDescription)")
-                bookRatings[book.id] = 0.0
-            }
+//        for book in books {
+//            do {
+//                let reviews = try await reviewService.getReviewsByBookId(bookId: book.id)
+//                
+//                let sum = reviews.reduce(0) { $0 + $1.rating }
+//                bookRatings[book.id] = reviews.isEmpty ? 0.0 : Double(sum) / Double(reviews.count)
+//            } catch {
+//                print("Failed to fetch rating for book \(book.id): \(error.localizedDescription)")
+//                bookRatings[book.id] = 0.0
+//            }
+//        }
+        do {
+            bookRatings = try await reviewService.getRatings(books: books)
+        } catch {
+            print(error)
         }
     }
     

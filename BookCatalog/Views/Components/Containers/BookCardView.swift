@@ -80,10 +80,10 @@ struct BookCardView : View {
     }
     
     var destinationView: some View {
+        let rating = ratingViewModel.bookRatings[book.id] ?? 0.0
         if let author = catalogViewModel.authors[book.authorId],
            let genre = catalogViewModel.genres[book.genreId],
-           let language = catalogViewModel.languages[book.languageId],
-           let rating = ratingViewModel.bookRatings[book.id] {
+           let language = catalogViewModel.languages[book.languageId] {
             return AnyView(
                 BookView(bookViewModel: BookViewModel(
                     container: serviceContainer,

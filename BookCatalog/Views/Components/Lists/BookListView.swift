@@ -22,9 +22,9 @@ struct BookListView: View{
             if !books.isEmpty {
                 VStack(spacing: 20) {
                     ForEach(books, id: \.id) { book in
+                        let rating = ratings[book.id] ?? 0.0
                         if let author = authors[book.authorId],
                            let genre = genres[book.genreId],
-                           let rating = ratings[book.id],
                            let language = languages[book.languageId] {
                             BookCardView(book: book, author: author, genre: genre, rating: rating, language: language)
                                 .padding(.horizontal)

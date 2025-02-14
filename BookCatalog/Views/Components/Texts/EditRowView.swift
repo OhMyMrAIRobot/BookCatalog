@@ -38,6 +38,7 @@ struct EditRowView: View {
                 })
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .frame(maxWidth: .infinity)
+                .autocorrectionDisabled(true)
             } else {
                 Text(value)
                     .foregroundColor(.gray)

@@ -11,13 +11,14 @@ struct ImageCarouselView: View {
     var book: Book
     @State private var currentIndex = 0
 
-    let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
-
+    let timer = Timer.publish(every: 20, on: .main, in: .common).autoconnect()
+    @State private var reloadToken = UUID()
+    
     var body: some View {
         ZStack {
             TabView(selection: $currentIndex) {
                 ForEach(Array(book.images.enumerated()), id: \.offset) { index, imgUrl in
-                    AsyncImage(url: URL(string: imgUrl)) { phase in
+                    AsyncImage(url: URL(string: imgUrl + "?\(reloadToken)")) { phase in
                         switch phase {
                         case .empty:
                             ProgressView()
@@ -27,6 +28,14 @@ struct ImageCarouselView: View {
                                 .resizable()
                         case .failure:
                             Text("Failed to load image")
+                            Button(action: {
+                                reloadToken = UUID()
+                            }) {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.black)
+                            }
+                            .padding()
                         @unknown default:
                             EmptyView()
                         }

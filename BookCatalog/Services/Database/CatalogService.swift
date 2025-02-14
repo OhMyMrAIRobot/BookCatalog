@@ -26,9 +26,6 @@ class CatalogService {
         let books: [Book] = snapshot.documents.compactMap { document in
             return try? document.data(as: Book.self)
         }
-        books.forEach { book in
-            print(book.title)
-        }
         return books
     }
     
@@ -63,18 +60,31 @@ class CatalogService {
     }
     
     
-    func getAuthorById(authorId: String) async throws -> Author {
-        let document = try await authorsRef.document(authorId).getDocument()
-        
-        guard let data = document.data(),
-              let author = try? Firestore.Decoder().decode(Author.self, from: data)
-        else {
-            throw NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Author not found"])
-        }
-        print(author.name)
-        return author
-    }
+//    func getAuthorById(authorId: String) async throws -> Author {
+//        let document = try await authorsRef.document(authorId).getDocument()
+//        
+//        guard let data = document.data(),
+//              let author = try? Firestore.Decoder().decode(Author.self, from: data)
+//        else {
+//            throw NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "Author not found"])
+//        }
+//        print(author.name)
+//        return author
+//    }
     
+    func getAuthors() async throws -> [String: Author] {
+        let snapshot = try await authorsRef.getDocuments()
+        
+        var authors: [String: Author] = [:]
+        
+        for document in snapshot.documents {
+            if let author = try? document.data(as: Author.self) {
+                authors[author.id] = author
+            }
+        }
+        
+        return authors
+    }
     
     
 }

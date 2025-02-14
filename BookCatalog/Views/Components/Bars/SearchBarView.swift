@@ -23,6 +23,7 @@ struct SearchBarView : View {
             TextField("Search books here...", text: $searchText)
                 .focused($isFocused)
                 .accentColor(.purple)
+                .autocorrectionDisabled(true)
                 .onChange(of: searchText) {
                     catalogViewModel.filterBooks(bookRatings: ratingViewModel.bookRatings)
                 }
