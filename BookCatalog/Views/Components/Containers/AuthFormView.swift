@@ -22,7 +22,7 @@ struct AuthFormView: View {
     @State private var age : Double = 6
     
     var body: some View {
-        ErrorAlert(showAlert: $showAlert, title: "Warning!", message: errorMsg, dismissButtonText: "Close")
+        ErrorAlertView(showAlert: $showAlert, title: "Warning!", message: errorMsg, dismissButtonText: "Close")
         
         UnevenRoundedRectangle(cornerRadii: .init(
             topLeading: 35.0,

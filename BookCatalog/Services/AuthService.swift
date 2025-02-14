@@ -18,7 +18,7 @@ class AuthService : ObservableObject {
     private init() {
         Task { @MainActor in
             self.isLoggedIn = self.isAuth()
-            self.isLoading = false  // Завершаем проверку
+            self.isLoading = false
         }
 //        Auth.auth().addStateDidChangeListener { _, user in
 //            DispatchQueue.main.async {
@@ -60,9 +60,22 @@ class AuthService : ObservableObject {
     }
     
     @MainActor
+    func reauthenticateUser(email: String, password: String) async throws {
+        guard let user = auth.currentUser else {
+            throw NSError(domain: "Firestore", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not found"])
+        }
+        
+        do {
+            let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+            try await user.reauthenticate(with: credential)
+        } catch {
+            throw error
+        }
+    }
+    
+    @MainActor
     func deleteUser() async throws {
         do {
-            print("curUser \(auth.currentUser!)")
             try await auth.currentUser?.delete()
             self.isLoggedIn = false
             print("user deleted")

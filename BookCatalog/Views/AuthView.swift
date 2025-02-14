@@ -31,7 +31,6 @@ struct AuthView: View {
             
             AuthFormView(serviceContainer: serviceContainer)
                 .zIndex(100)
-            
         }
         
     }

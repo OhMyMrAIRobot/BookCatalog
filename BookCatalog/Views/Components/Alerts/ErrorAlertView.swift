@@ -2,12 +2,12 @@
 //  ErrorAlertView.swift
 //  BookCatalog
 //
-//  Created by Daniil on 27.01.25.
+//  Created by Daniil on 14.02.25.
 //
 
 import SwiftUI
 
-struct ErrorAlert : View {
+struct ErrorAlertView: View {
     @Binding var showAlert: Bool
     var title: String
     var message: String

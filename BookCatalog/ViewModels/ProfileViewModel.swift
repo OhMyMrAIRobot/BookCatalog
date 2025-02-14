@@ -127,13 +127,15 @@ class ProfileViewModel: ObservableObject {
     }
     
     @MainActor
-    func deleteProfile() async {
+    func deleteProfile(email: String, password: String) async throws {
         do {
+            try await AuthService.shared.reauthenticateUser(email: email, password: password)
             try await profileService.deleteProfile()
             try await reviewService.deleteUserReviews()
             try await AuthService.shared.deleteUser()
         } catch {
             print(error.localizedDescription)
+            throw error
         }
     }
 }

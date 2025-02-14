@@ -13,12 +13,15 @@ struct ProfileView: View {
     
     @State private var isDataLoaded = false
     @State private var navigateToEditProfile = false
-    @State private var showDeleteAlert = false
+    @State private var showDeleteSheet = false
+    @State private var password = ""
+    @State private var showAlert: Bool = false
+    @State private var errorMsg = ""
     
     var body: some View {
         VStack(spacing: 20) {
             VStack{}.frame(maxWidth: .infinity, maxHeight: 60)
-            
+            ErrorAlertView(showAlert: $showAlert, title: "Warning!", message: errorMsg, dismissButtonText: "Close")
             ScrollView {
                 Image(systemName: "person.crop.circle.fill")
                     .resizable()
@@ -69,17 +72,26 @@ struct ProfileView: View {
                         }
                         
                         ProfileActionButtonView(title: "Delete my profile") {
-                            showDeleteAlert = true
+                            showDeleteSheet = true
                         }
                     }
                     .padding(.top, 15)
-                    
-                    ConfirmAlertView(
-                        showAlert: $showDeleteAlert,
-                        title: "Are you sure to delete profile?",
-                        message: "This action cannot be undone."
-                    ) {
-                        Task { await profileViewModel.deleteProfile() }
+                    .sheet(isPresented: $showDeleteSheet) {
+                        DeleteAccountSheet(isPresented: $showDeleteSheet, password: $password) {
+                            Task {
+                                do {
+                                    try await profileViewModel.deleteProfile(email: profile.email, password: password)
+                                } catch {
+                                    errorMsg = error.localizedDescription
+                                    showAlert.toggle()
+                                    password = ""
+                                }
+                            }
+
+                        }
+                        .presentationDetents([.fraction(0.4)])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackground(Color.gradientColor)
                     }
 
                     if !profile.about.isEmpty {
